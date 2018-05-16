@@ -1,0 +1,173 @@
+\usepackage{amssymb,amsthm, amsfonts,amstext}
+\usepackage{stmaryrd,tabularx}
+\usepackage[all,cmtip,2cell,pdf,dvips]{xy}
+\usepackage{graphicx}		
+\usepackage{color}	
+\usepackage[centertags]{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{calc,arrows,snakes}
+%\usepackage{newlfont}
+
+\setlength{\topmargin}{0.0in}
+\setlength{\textheight}{8.5in}
+\setlength{\oddsidemargin}{-0.25in}
+\setlength{\textwidth}{7in}
+
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{defn}{Definition}[section]
+\newtheorem{defnno}{Definition}
+\newtheorem{defnNo}{Definition}
+\newtheorem{rem}{Remark}[section]
+\newtheorem{rems}{Remarks}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{exer}{Exercise}[section]
+\newtheorem{obs}{Observation}
+\newtheorem{property}{Property}
+\newtheorem{ReviewExer}{Review Exercise}
+\newtheorem{SimpleExer}{Exercise}
+\newtheorem{CatExer}{Exercise}
+\newtheorem{CatExam}{Example}
+\newtheorem{Detail}{Detailed Proof}
+\newtheorem{SetExer}{Exercise}
+\newtheorem{example}{Example}[section]
+\newtheorem{Exam}{Example}
+
+\newcommand\inv[1]{#1\raisebox{1.15ex}{$\scriptscriptstyle-1$}}
+
+
+
+\def\bd{\begin{displaystyle}}
+\def\ed{\end{displaystyle}}
+
+
+
+
+
+\def\a{\text{\begin{boldmath}${\rm{a}}$\end{boldmath}}}
+\def\A{\text{\begin{boldmath}${\rm{A}}$\end{boldmath}}}
+\def\b{\text{\begin{boldmath}${\rm{b}}$\end{boldmath}}}
+\def\vB{\text{\begin{boldmath}${\rm{B}}$\end{boldmath}}}
+\def\c{\text{\begin{boldmath}${\rm{c}}$\end{boldmath}}}
+\def\vC{\text{\begin{boldmath}${\rm{C}}$\end{boldmath}}}
+\def\d{\text{\begin{boldmath}${\rm{d}}$\end{boldmath}}}
+\def\D{\text{\begin{boldmath}${\rm{D}}$\end{boldmath}}}
+\def\e{\text{\begin{boldmath}${\rm{e}}$\end{boldmath}}}
+\def\exp{\text{\begin{boldmath}${\rm{exp}}$\end{boldmath}}}
+\def\E{\text{\begin{boldmath}${\rm{E}}$\end{boldmath}}}
+\def\F{\text{\begin{boldmath}${\rm{F}}$\end{boldmath}}}
+\def\G{\text{\begin{boldmath}${\rm{G}}$\end{boldmath}}}
+\def\H{\text{\begin{boldmath}${\rm{H}}$\end{boldmath}}}
+\def\I{\text{\begin{boldmath}${\rm{I}}$\end{boldmath}}}
+
+\def\bJ{\text{\begin{boldmath}${\rm{J}}$\end{boldmath}}}
+\def\L{\text{\begin{boldmath}${\rm{L}}$\end{boldmath}}}
+\def\n{\text{\begin{boldmath}${\rm{n}}$\end{boldmath}}}
+
+\def\bN{\text{\begin{boldmath}${\rm{N}}$\end{boldmath}}}
+
+\def\s{\text{\begin{boldmath}${\rm{s}}$\end{boldmath}}}
+
+\def\bP{\text{\begin{boldmath}${\rm{P}}$\end{boldmath}}}
+\def\boldt{\text{\begin{boldmath}${\rm{t}}$\end{boldmath}}}
+\def\S{\text{\begin{boldmath}${\rm{S}}$\end{boldmath}}}
+\def\u{\text{\begin{boldmath}${\rm{u}}$\end{boldmath}}}
+\def\U{\text{\begin{boldmath}${\rm{U}}$\end{boldmath}}}
+\def\vV{\text{\begin{boldmath}${\rm{V}}$\end{boldmath}}}
+\def\v{\text{\begin{boldmath}${\rm{v}}$\end{boldmath}}}
+\def\w{\text{\begin{boldmath}${\rm{w}}$\end{boldmath}}}
+\def\vW{\text{\begin{boldmath}${\rm{W}}$\end{boldmath}}}
+\def\x{\text{\begin{boldmath}${\rm {x}}$\end{boldmath}}}
+\def\y{\text{\begin{boldmath}${\rm{y}}$\end{boldmath}}}
+\def\z{\text{\begin{boldmath}${\rm{z}}$\end{boldmath}}}
+\def\0{\text{\begin{boldmath}${\rm{0}}$\end{boldmath}}}
+\def\1{\text{\begin{boldmath}${\rm{1}}$\end{boldmath}}}
+
+
+\def\bB{{\mathbb B}}
+\def\C{\mathbb C}
+\def\bF{\mathbb F}
+\def\N{\mathbb N}
+\def\Q{\mathbb Q}
+\def\R{\mathbb R}
+\def\V{{\mathbb V}}
+\def\W{{\mathbb W}}
+\def\Z{\mathbb Z}
+
+
+\def\cB{{\mathcal B}}
+\def\cC{{\mathcal C}}
+
+\def\cD{{\mathcal D}}
+\def\cF{{\mathcal F}}
+\def\cH{{\mathcal H}}
+\def\cI{{\mathcal I}}
+\def\J{{\mathcal J}}
+\def\K{{\mathcal K}}
+\def\Lip{{\mathcal Lip}}
+\def\cL{{\mathcal L}}
+\def\cLM{{\mathcal{LM}}}\def\cLP{{\mathcal{LP}}}
+\def\cM{{\mathcal M}}
+\def\cN{{\mathcal N}}
+\def\cNLP{{\mathcal{NLP}}}
+\def\O{{\mathcal O}}
+\def\cP{{\mathcal P}}
+\def\P{{(\cal P)}}
+\def\cPND{pnd}
+\def\cQ{{\mathcal Q}}
+\def\cR{{\mathcal R}}
+\def\cU{{\mathcal U}}
+\def\cUM{{\mathcal{UM}}}
+\def\cV{{\mathcal V}}
+\def\cW{{\mathcal W}}
+
+\def\cX{{\mathcal X}}
+
+\def\0{\text{\boldmath ${0}$}}
+
+\def\ball{\overline{I\kern -.35em B}}
+\def\argmax{\text{argmax}}
+\def\argmin{\text{argmin}}
+\def\cco{\overline{\text{\rm co}}\,}
+\def\oball{{I\kern -.35em B}}
+\def\cball{\overline{I\kern -.35em B}}
+\def\reals{{\mathbb{R}}}
+\def\iint{{\text{\rm int}}}
+\def\cl{{\text{\rm cl}}}
+\def\gr{{\text{\rm gr}}}
+\def\dom{{\text{\rm dom}}}
+\def\proj{{\text{\rm proj}}}
+\def\epi{{\text{\rm epi}}}
+\def\hypo{{\text{\rm hypo}}}
+\def\bdry{{\text{\rm bdry}}}
+\def\co{{\text{\rm co}\,}}
+\def\lev{{\text{{\rm lev}} }}
+\def\sep{{\text{SEP}\;}}
+\def\spann{{\text{span}}}
+\def\eop{\hfill{$\vcenter{\hrule height1pt \hbox{\vrule width1pt height5pt
+   \kern5pt \vrule width1pt} \hrule height1pt}$} \medskip}
+\def\bds{\begin{displaystyle}}
+\def\eds{\end{displaystyle}}
+\def\Tr{{\raise1pt\hbox{$\scriptscriptstyle\top$}}}
+\def\oh{\text{o}}
+\def\Oh{\text{O}}
+
+
+
+
+\def\red{\color{red}}
+\def\blue{\color{blue}}
+\def\Blue{\color{blue}\bf}
+\definecolor{fgreen}{rgb}{.10,.80,.10}
+\def\fgreen{\bf\color{fgreen}}
+\def\green{\bf\color{green}}
+\definecolor{mygold}{rgb}{0.85, 0.50, 0.00}
+\def\mygold{\bf\color{mygold}}
+\definecolor{points}{rgb}{0.20, 0.60, 0.20}
+\def\points{\bf\color{points}}
+\definecolor{orange}{rgb}{1,.5,0}
+\definecolor{mygray}{cmyk}{.6,.7,.7,.8}
+\def\mygray{\bf\color{mygray}}

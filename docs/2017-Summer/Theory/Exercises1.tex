@@ -1,0 +1,310 @@
+\documentclass[12pt]{article}
+
+\input ElvisMacros.mac
+
+
+\begin{document}
+
+
+
+
+\begin{center}
+{\LARGE\bf\underline{Notes on the Elvis Problem}}
+\end{center}
+
+\section{Preliminaries.}
+The philosophy of so-called {\em Convex Analysis} is that sets and functions are treated with equal attention.   Let me explain.
+  
+Recall a set $F\subseteq\R^n$ is convex provided
+\begin{equation}\label{eq: dir}
+x,\,y\in F,\,0\leq\lambda \leq 1\quad\Longrightarrow\quad \lambda x+(1-\lambda)y\in F.
+\end{equation}
+The set of all nonempty, closed and convex sets is denoted by $\cC$.  
+
+The {\em epigraph} $\epi(f)$ of an extended-valued function $f:\R^n\to\overline{\R}=\R\cup\{\pm\infty\}$ is defined as 
+\[
+\epi(f):=\{(x,r):r\geq f(x)\},
+\]
+which is a subset in $\R^{n+1}$.  Then $f(\cdot)$ is (1) {\em lower semicontinuous} (lsc) provided $\epi(f)$ is closed, (2) {\it convex} provided $\epi(f)$ is a convex set (in $\R^{n+1}$), and (3) {\it proper} if $\epi(f)\not=\emptyset$ and contains no vertical lines (a vertical line at $x\in\R^n$ occurs when $f(x)=-\infty$).  The set of all lsc, convex and proper functions is denoted by $\cF$.   
+
+
+{\blue
+\begin{exer}
+Suppose $f:\R^n\to\overline{\R}$.
+\begin{itemize}
+\item[(a)]  The {\em effective domain} of $f(\cdot)$ is defined by $\dom(f):=\{x:f(x)<\infty\}$.  Show if $f(\cdot)\in\cF$, then $\dom(f)$ is a convex set.  Give an example for which $f(\cdot)\in\cF$ but $\dom(f)$ is not closed.
+\item[(b)]  If $\dom(f)=\R^n$, show that $f\in\cF$ if and only if 
+\begin{equation}\label{eq: cnvx}
+f(x_{\lambda})\leq (1-\lambda)f(x_0)+\lambda f(x_1)
+\end{equation}
+for all $x_0,x_1\in\R^n$ and $0\leq \lambda\leq 1$, and where $x_{\lambda}:=(1-\lambda)\,x_0+\lambda\,x_1$.
+\item[(c)]  Define an arithmetic and an order relation on $\overline{\R}$ so that the property that a lsc $f(\cdot)$ is convex is characterized by \eqref{eq: cnvx}.
+\end{itemize}
+\end{exer}
+}
+
+Associated to any set $S\subseteq \R^n$ is the indicator function $I_S:\R^n\to\overline{\R}$ defined by
+\[
+I_S(x)=\begin{cases}
+0\quad &\text{if }x\in S \\
++\infty &\text{if }x\not\in S.
+\end{cases}
+\]
+
+{\blue
+\begin{exer}  Suppose $S\subseteq \R^n$.  Show $I_S(\cdot)$
+\begin{itemize}
+\item[(a)] is lsc if and only if $S$ is closed;
+\item[(b)] is a convex function if and only if $S$ is a convex set; and
+\item[(c)] belongs to $\cF$ if and only if $S$ belongs to $\cC$.
+\end{itemize}
+\end{exer}
+}
+
+One of the most important properties of convex sets is the fact that there are two ways to characterize them.  The first is the direct definition given above in \eqref{eq: dir}.  A second, or {\em dual} way, is through so-called separation as explained in the following theorem.
+
+\begin{thm}[Separation Theorem]\label{thm: sep}
+Suppose $F$ is closed and convex and $v\not\in F$.  Then there exists $\vec n\in\R^n$ so that 
+\begin{equation}\label{eq: sep}
+\sup\bigl\{\langle v',\vec n\rangle:\; v'\in F\bigr\} < \langle v,\vec n\rangle
+\end{equation}
+\end{thm} 
+\begin{proof}  Please see the Primer on Convex Analysis file.
+\end{proof}
+
+The (closed) half space (with normal vector $\vec{\! n}\in\R^n$, $\vec n\not=\0$, and at level $r\in\R$) is defined by 
+\[
+\cH_{\vec{n},r}:=\bigl\{v :\;\langle\vec{n},v\rangle\leq r\bigr\}
+\]
+
+{\blue
+\begin{exer}
+Show that $F$ is closed and convex if and only if
+\[
+F=\bigcap\biggl\{\cH_{\vec{n},r}:\;\vec{n}\in\R^n,\,r\in\R\text{  are such that } F\subseteq \cH_{\vec{n},r} \biggr\}
+\]
+\end{exer}}
+
+\section{The {\em polar} of a set} 
+
+\begin{defn}
+The polar $F^{\circ}$ of a set $F\in\cC$ is the set
+\[
+F^{\circ}:= \{\zeta\in \R^n\;:\;\langle \zeta,v\rangle\leq 1\;\forall
+v\in F\}.
+\]
+\end{defn}
+
+A set $F$ is {\em bounded} if there exists a constant $m\geq 0$ so that $v\in F\Rightarrow |v|\leq m$.  Let 
+\[
+\cC_{0}:=\bigl\{F\in \cC:\;F\text{ is bounded and }\0\in\iint{F}\bigr\}. 
+\]
+
+{\blue
+\begin{exer}
+Show the following.
+\begin{itemize}
+\item[(a)] For any nonempty set $F\subseteq\R^n$, one has $F^{\circ}$ belonging to $\cC$.
+\item[(b)] $F\in \cC$ is bounded if and only if
+ $\0\in\iint(F^{\circ})$.
+\item[(c)] $F\in \cC_0$ if and only if
+ $F^{\circ}\in\cC_0$.
+\item[(d)]  If $F=r\ball$ for some $r>0$, then $F^{\circ}=\frac{1}{r}\cball$. 
+\item[(e)]  With $n=2$ and positive constants $a,\,b$, if
+\[
+F=\left\{\begin{pmatrix} x \\ y\end{pmatrix}:\frac{x^2}{a^2}+\frac{y^2}{b^2}\leq 1\right\}
+\quad\text{then}\quad F^{\circ}=\left\{\begin{pmatrix} \zeta \\ \xi\end{pmatrix}:{a^2}\zeta^2+{b^2}\xi^2\leq 1\right\}.
+\]
+\item[(f)] For $1\leq p< +\infty$, the $p$ - norm is defined on $\R^n$ by 
+\[
+\|\x\|_{p}:=\root{p}\of{\sum_{i=1}^n |x_i|^{p}} 
+\quad\text{and}\quad
+\|\x\|_{\infty}:=\max\bigl\{|x_i|:\;1\leq i\leq n\bigr\}, \quad\text{where }\x=\begin{pmatrix}x_1 \\ \vdots \\ x_n\end{pmatrix}\in\R^n.
+\]
+The $p$ unit ball is the set $\ball_p:=\bigl\{\x:\|\x\|_p\leq 1\bigr\}$, which belongs to $\cC_0$.  If $F=\ball_p$, then $F^{\circ}=\ball_q$, where $\frac{1}{p}+\frac{1}{q}=1$.
+\end{itemize}
+\end{exer}}
+
+Actually one should think of $F^{\circ}$ belonging to the so called {\em dual} space of $\R^n$, but since $\R^n$ is its own dual, the dual space can be
+identified with $\R^n$ itself.  Nonetheless, one should be cognizant of the three ways elements of $\R^n$ are being used: (1) as so-called state vectors $x$ lying in the ambient space $\R^n$, (2) as \lq\lq pointers\rq\rq\ or velocity vectors $v\in F$ describing perhaps the direction and speed a state vector is moving, and (3) linear functionals that act on the state vectors through an inner product.  
+Let's elaborate on (3): Suppose $\zeta\in\R^n$, and define the map $\ell_{\zeta}(\cdot):\R^n\to\R^n$ by $\ell_{\zeta}(x)=\langle\zeta,x\rangle$.  Then  $\ell(\cdot):=\ell_{\zeta}(\cdot)$ satisfies the linearity property
+\begin{equation}\label{eq: linear}
+\ell(x_1+rx_2)=\ell(x_1)+r\ell(x_2).
+\end{equation}
+Any function $\ell(\cdot)$ satisfying \eqref{eq: linear} is called a linear functional, and the dual space of $\R^n$ is the set of all linear functionals.   
+The following exercise is the manner in which the dual space can be identified with $\R^n$ 
+
+{\blue
+\begin{exer}
+Suppose $\ell(\cdot)$ is a linear functional.  Show $\exists$ a unique $\zeta\in\R^n$ with $\ell(\cdot)=\ell_{\zeta}(\cdot)$.
+\end{exer}
+}
+\noindent
+In this way, we usually abuse notation by just writing $\zeta$ for the linear map $\ell_{\zeta}(\cdot)$.  The point is that elements of $\R^n$ can be viewed in two distinct ways: (1) as the usual coordinate vector with $n$ real components, and (2) in a way that says how it \lq\lq operates\rq\rq\ on the space $\R^n$ by taking an inner product.   The definition of $F^{\circ}$ consists of describing how its elements are acting on elements in $\R^n$, which is why we said it should be thought of as a subset of the dual space.  The same applies to the vector $\zeta$ in Theorem~\ref{thm: sep}.
+
+\section{Gauge functions}
+Suppose $F\in\cC$ is given.  The gauge function $\gamma_F:X\to
+[0,\infty]$ is defined by
+\[
+\gamma_F (x)=\inf\biggl\{t\geq 0:\frac{1}{t}\;x\in F\biggr\}.
+\]
+By convention, if $rx\notin F$ for all $r>0$, then
+$\gamma_F(x)=+\infty$.
+We mainly will be interested in only the case where $F\in\cC_0$.
+
+
+{\blue
+\begin{exer}\label{exer: gauge}  Let $F\in\cC$ with $\0\in F$.  Show the following:
+\begin{itemize}
+\item[(a)]  $v\in F$ if and only if $\gamma_F(x)\leq 1$.
+\item[(b)]  $\gamma_{F}(\cdot)$ is positively homogeneous: that is, $\gamma_{F}(r v)=r\gamma_{F}(v)\quad \forall v\in\R^n,\;r\geq 0$. 
+\item[(c)]  $\gamma_{F}(\cdot)\in\cF$, and is finite-valued if and only if $\0\in\iint(F)$.
+\end{itemize}
+\end{exer}
+}
+
+A converse of some of the statements above is given next.
+
+{\blue 
+\begin{exer}
+Suppose $\gamma(\cdot):\R^n\to[0,+\infty]$ belongs to $\cC$ and is also positively homogeneous.  Define $F:=\{x\in\R^n:\gamma(x)\leq 1\}$.  Show $F\in\cC$ and $\gamma(\cdot)=\gamma_F(\cdot)$.  Furthermore, show $\gamma(\cdot)$ is finite-valued if and only if $\0\in\iint(F)$. 
+\end{exer}
+}
+
+\section{Differentiablility concepts of convex objects}
+For a proper convex function
+$f:X\to(-\infty,+\infty]$, the subgradient $\partial f(x)$ at a
+point $x\in \dom f$ is given by
+\begin{equation}\label{eq: subgrad}
+\partial f(x):=\{\xi\in X:f(y)\geq f(x)+\langle
+\xi,y-x\rangle\;\forall y\in X\}.
+\end{equation}
+The analogous concept for a set $F\in\cC$ is the normal cone:  For $v\in F$, the normal cone $N_F(v)$ is given by
+\[
+N_F(v):=\{\zeta:\langle \zeta,v'-v\rangle\leq 0\quad\forall v'\in
+F\}.
+\]
+
+{\blue
+\begin{exer}\label{exer: epi}\ 
+\begin{itemize}
+\item[(a)]  For $f(\cdot)\in\cF$, show that 
+\begin{equation}\label{eq: sub}
+\zeta\in\partial f(x) \quad \Longleftrightarrow\quad
+(\zeta,-1)\in N_{\epi(f)} \bigl(x,f(x)\bigr).
+\end{equation}
+\item[(b)]
+For $F\in\cC$, show that
+\begin{equation}\label{eq: sub ind}
+\zeta\in\partial I_{F}(x) \quad \Longleftrightarrow\quad
+\zeta\in N_{F} \bigl(v\bigr).
+\end{equation}
+\end{itemize}
+\end{exer}} 
+
+The general Elvis problem relies on the following relationships of the gauge functions for both the velocity set $F\in\cC_0$ and its polar $F^{\circ}$. 
+
+{\blue
+\begin{exer}\label{exer: diff gauge}
+Suppose $F\in\cC_0$.  Show that the following statements are equivalent for any $x,\,\zeta\in\R^n$.
+\begin{enumerate}
+\item[(a)]  $\langle \zeta,x\rangle =
+\gamma_{F}(x)\gamma_{F^{\circ}}(\zeta)$.
+\item[(b)]  $\frac{x}{\gamma_{F}(x)}$ attains the max over $v\in F$
+of the map $v\to \langle \zeta,v\rangle$.
+\item[(c)]  $\zeta\in N_F\left(\frac{x}{\gamma_F(x)}\right)$.
+\item[(d)]  $\frac{\zeta}{\gamma_{F^{\circ}}(\zeta)}$ attains the max
+over $\xi\in F^{\circ}$ of the map $\xi\to \langle \xi,x\rangle$.
+\item[(e)]  $x\in N_{F^{\circ}}\left(\frac{\zeta}{\gamma_{F^{\circ}}(\zeta)}\right)$.
+\item[(f)]  $\frac{\zeta}{\gamma_{F^{\circ}}(\zeta)}\in\partial\gamma_F(x)$.
+\item[(g)]  $\frac{x}{\gamma_{F}(x)}\in\partial\gamma_{F^{\circ}}(\zeta)$.
+\end{enumerate}
+\end{exer}
+}
+
+A convex set $F\subseteq\R^n$ is {\it strictly} convex if whenever $x$ and $y$ belong to $F$ ($x\not= y$) and $0<\lambda<1$, then $\lambda
+x+(1-\lambda)y\in\iint F$.  The so-called dual concept is having a \lq\lq smooth\rq\rq\ boundary.  A closed convex set has a smooth boundary if and only if $N_F(x)$ is of the form $\{r\zeta_{x}:r\geq 0\}$ for some vector $\zeta_x$ with $|\zeta_x|=1$, and the map $x\mapsto \zeta_x$ is continuous on $\bdry F$.
+
+{\blue
+\begin{exer}  Show that $F$ is strictly convex if and only if $F^{\circ}$ has a smooth boundary.
+\end{exer}}
+
+Given $F\in\cC$, the {\em support} function $\sigma_{F}(\cdot):\R^n\to\R$ is defined by 
+\[
+\sigma_{F}(\zeta)=\sup\{\langle\zeta,v\rangle:v\in F\}
+\]
+
+{\blue
+\begin{exer}  Suppose $F\in\cC$.
+\begin{itemize}
+\item[(a)]  Show $\sigma_F(\cdot)\in\cF$.
+\item[(b)]  If $\sigma_{F}(\zeta)<+\infty$, show there exists at least one $v\in F$ so that
+\[
+\sigma_{F}(\zeta)=\langle \zeta,v\rangle,
+\]
+and is unique if $F$ is strictly convex.  Give an example where there may be more than one such $v$.
+\item[(c)]  Show that $\sigma_{F}(\zeta)<\infty$ for all $\zeta\in\R^n$ if and only if $\0\in\iint(F)$.  
+\item[(d)]  Suppose $x\not\in F$.  Show there exists a unique $v\in F$ so that 
+\[
+\|x-v\|=\min\bigl\{\|x-v'\|:\;v'\in F\bigr\}.
+\] 
+Such a $v$ is called the projection of $x$ into $F$, and is denoted by $\proj_{F}(x)$.
+\item[(e)]  Suppose $x\not\in F$, and let $v=\proj_F(x)$ and $\zeta := x - v$.  Show $\zeta\in N_{F}(v)$ and $\sigma_{F}(\zeta)=\langle \zeta,v\rangle$.
+\end{itemize}
+\end{exer}
+}
+Suppose $f(\cdot)\in\cF$.  It is obvious from \eqref{eq: subgrad} that a point $\bar x\in\R^n$ solves the problem
+\begin{equation}\label{eq: cvx min1}\tag{$\cP$}
+\min f(x)\quad\text{over}\;x\in \R^n
+\end{equation} 
+if and only if $\0\in\partial f(\bar x)$.  Our Elvis problem will entail a problem like ($\cP$) where $f(\cdot)$ is of the form $f(x)=g(x)+\cI_{\Sigma}(x)$ where $g(\cdot)\in\cF$ is finite-valued and $\Sigma\in\cC$.  In this case, problem ($\cP$) is equivalent to both of 
+\begin{equation}\label{eq: cvx min2}\tag{$\cP'$}
+\min g(x)\quad\text{over}\;x\in \Sigma
+\end{equation} 
+\begin{equation}\label{eq: cvx min3}\tag{$\cP''$}
+\min \biggl\{g(x)+\cI_{\Sigma}(x)\biggr\}\quad\text{over}\;x\in\R^n.
+\end{equation} 
+Considering the form of ($\cP''$), the necessary and sufficient optimality condition that $\bar x$ solves ($\cP''$) is that 
+\begin{equation}\label{eq: opt1}
+\0\in\partial\bigl\{g(\cdot)+\cI_{\Sigma}(\cdot)\bigr\}(\bar x).
+\end{equation} 
+Now it would be nice if we knew that the subgradient of a sum of two elements in $\cF$ was the sum of its subgrdients (in some sense).  This is akin to the well-known linearity property of ordinary differentiation.  It is not true in general:
+
+{\blue
+\begin{exer}
+With $n=1$, let 
+\[
+f_1(x)=
+\begin{cases}
+-\sqrt{x}\quad &\text{if  }x\geq 0 \\
++\infty &\text{if  }x< 0
+\end{cases}\qquad\text{and}\qquad
+f_2(x)=
+\begin{cases}
+-\sqrt{-x}\quad &\text{if  }x\leq 0 \\
++\infty &\text{if  }x> 0
+\end{cases}
+\]
+Show that $f_1(\cdot),\,f_2(\cdot)\in\cF$, $\partial f_1(\0)=\partial f_2(\0)=\emptyset$ and $\partial \bigl(f_1(\cdot)+f_2(\cdot)\bigr)(\0)=\R$,  
+\end{exer}}
+
+So a \lq\lq sum rule\rq\rq\ cannot be expected to hold in all cases, but in the case that will be of most interest to us, it does hold.  The following is a special case that we will use below.
+ 
+\begin{thm}[Rockafellar, Convex Analysis, Theorem 23.8]\label{thm: sum}
+Suppose $f(\cdot),\,g(\cdot)\in\cF$ and $\dom(g)=\R^n$ (that is, $g(\cdot)$ is finite-valued).  Then for all $x\in\dom(f)$, we have
+\[
+\partial \biggl(f(\cdot)+g(\cdot)\biggr)(x)=\partial f(x) +\partial g(x):=\bigl\{\zeta+\xi:\zeta\in\partial f(x),\;\xi\in\partial g(x)\bigr\}
+\]
+\end{thm} 
+
+{\blue
+\begin{exer}
+Consider ($\cP''$) with $g(\cdot)\in\cF$ and $\Sigma\in\cC$.  Suppose further that $\dom(g)=\R^n$.  Show $\bar x$ solves ($\cP''$) if and only if there exists $\zeta\in \partial g(\bar x)$ satisfying $-\zeta\in N_{\Sigma}(\bar x)$.  
+\end{exer}
+
+\begin{exer}
+Suppose $f(\cdot)\in\cF$ and $g(\cdot)$ is defined by $g(x)=f(-x)$.  Show that $\zeta\in\partial g(x)$ if and only if $-\zeta\in \partial f(-x)$.  Explain why this is a special case of the Chain Rule for convex functions.
+\end{exer}
+}
+
+\end{document}
