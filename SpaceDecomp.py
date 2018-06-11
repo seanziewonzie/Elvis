@@ -73,33 +73,33 @@ class SpaceDecomp:
 			adjrow=[]
 			#This will constantly update the graph so that two regions are adjacent if and only if their intersection is not subsumed by another intersection
 			if i==0:
-				adjgraph.append([0])
+				adjarray.append([0])
 			else:
 				for j in range(i):
 					#This will check the possible adjacency of the new region and another region
 					ijPoly=Polyhedron(ieqs=regions[i]+regions[j])
 					if p.dim()>=0:
 						adjacency=1
-						#I will check against every other adjacency and see if this new adjacency is subsumed by it, or subsumes it
+						#Check against every other adjacency and see if this new adjacency is subsumed by it, or subsumes it
 						for k in range(i):
-							if adjgraph[j][k]==0:
-								adjacency=1
-								#no need to check against an adjacency which doesn't exist
-							if adjgraph[j][k]==1:
+							if adjarray[j][k]==1:
 								kjPoly=Polyhedron(ieqs=regions[k]+regions[j])
-								if kjPoly&ijPoly==ijPoly:
-									adjacency=adjacency*0
-								if kjPoly&ijPoly==kjPoly:
-									adjacency=adjacency*1
-									adjgraph[k][j]=0
-									adjgraph[j][k]=0
+								if kjPoly!=ijPoly:
+									if kjPoly&ijPoly==ijPoly:
+										adjacency=0
+										print('The intersection of ' + str(i) +' and ' + str(j) + ' is subsumed by the intersection of regions ' + str(k) + ' and ' + str(j))
+										break
+									if kjPoly&ijPoly==kjPoly:
+										adjarray[k][j]=0
+										adjarray[j][k]=0
 					else:
 						adjacency=0
+						print('Regions ' + str(i) + ' and ' + str(j) + ' dont intersect')
 					adjrow.append(adjacency)
-					adjgraph[j].append(adjacency)
+					adjarray[j].append(adjacency)
 				#The final entry is the adjanceny of i with itself, which we consider to be 0 for simplification 
 				adjrow.append(0)
-				adjgraph.append(adjrow)
+				adjarray.append(adjrow)
 			
 	
 	
