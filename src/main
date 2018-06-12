@@ -1,6 +1,5 @@
 from sage.all import *
 from SpaceDecomp import *
-from StartAndEnd import *
 
 class Elvis:
 	def main():
