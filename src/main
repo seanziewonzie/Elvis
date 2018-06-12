@@ -1,0 +1,25 @@
+from sage.all import *
+from SpaceDecomp import *
+from StartAndEnd import *
+
+class Elvis:
+
+	def NewOrSavedSpaceDecomp():
+		response=raw_input('Do you want to use a saved space decomposition?')
+		return response
+		
+	def SpaceDecompBranch():
+		try: 
+			x=NewOrSavedSpaceDecomp()
+		except ValueError as e:
+			if e!= 'y' or e!='n':
+				print('This is not a valid input')
+		if x == 'y':
+			chooseSpaceDecomp()
+		else:
+			createSpaceDecomp()
+			
+		
+		
+	if __name__ == "__main__":
+		main()
