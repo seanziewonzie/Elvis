@@ -4,7 +4,7 @@ from Situation import *
 class Elvis:
 	
 	def main():
-		response = raw_input('Enter c to create or load a calculation. Enter s to view or edit a created situation. ')
+		response = raw_input('Enter c to create or load a calculation. Enter s to view or edit a created situation or create a new situation. ')
 		while response !='c' and response !='s':
 			print('This is not a valid input. Please type c/s: ')
 			response =raw_input('Enter c to create or load a calculation. Enter s to view or edit a created situation, or create a new situation. ')
