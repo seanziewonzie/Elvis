@@ -1,7 +1,6 @@
 from sage.all import *
 from SpaceDecomp import *
 from Velocities import *
-from StartAndEnd import *
 class Situation:
 
 	#The user will be asked if they want to utilize a situation which has previously been made or if they want to make a new one.	
@@ -32,7 +31,7 @@ class Situation:
 		
 		#Get a velocity set for this space decomposition
 		vel = Velocities(spaceDecomp)
-		velocities = vel.createVelocities()
+		velocities = vel.createVelocities(spaceDecomp)
 		
 		situation = [spaceDecomp,velocities]
 		return situation
