@@ -42,11 +42,11 @@ class Calculation:
 	def createCalculation():
 		#Get a space decomposition
 		sd=SpaceDecomp()
-		spaceDecomp=sd.SpaceDecompLoadOrNew()
+		spaceDecomp=sd.spaceDecompLoadOrNew()
 		
 		#Get a velocity set for this space decomposition
 		vel = Velocities()
-		velocities = vel.VelocitiesLoadOrNew(spaceDecomp)
+		velocities = vel.velocitiesLoadOrNew(spaceDecomp)
 		
 		#get start and end points within this space decomposition
 		sae = StartAndEnd
