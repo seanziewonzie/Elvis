@@ -5,7 +5,7 @@ from StartAndEnd import *
 class Situation:
 
 	#The user will be asked if they want to utilize a situation which has previously been made or if they want to make a new one.	
-	def calculationLoadOrNew(self):
+	def situationLoadOrNew(self):
 		response =raw_input('Press l to load a situation. Press n to create a new one. ')
 		while response !='l' and response !='n':
 			print('This is not a valid input. Please type l/n: ')
@@ -31,8 +31,8 @@ class Situation:
 		spaceDecomp=sd.spaceDecompLoadOrNew()
 		
 		#Get a velocity set for this space decomposition
-		vel = Velocities()
-		velocities = vel.velocitiesLoadOrNew(spaceDecomp)
+		vel = Velocities(spaceDecomp)
+		velocities = vel.createVelocities()
 		
 		situation = [spaceDecomp,velocities]
 		return situation
