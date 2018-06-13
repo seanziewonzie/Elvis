@@ -1,26 +1,16 @@
 from sage.all import *
-from SpaceDecomp import *
-from Velocities import *
-from StartAndEnd import *
+from Situation import *
 class Calculation:
-	global response
-	response =""
-	global calculation
-	calculation = []
-	
-	def __init__(self):
-		self.response = response
-		self.calculation = calculation
 	
 	#The user will be asked if they want to utilize a calculation which has previously been made or if they want to make a new one.	
 	def calculationLoadOrNew(self):
-		self.response =raw_input('Press l to load a calculation. Press n to create a new one. ')
-		while self.response !='l' and self.response !='n':
+		response =raw_input('Press l to load a calculation. Press n to create a new one. ')
+		while response !='l' and response !='n':
 			print('This is not a valid input. Please type l/n: ')
-			self.response =raw_input('Press l to load a calculation. Press n to create a new one. ')
-		if self.response == 'l':
+			response =raw_input('Press l to load a calculation. Press n to create a new one. ')
+		if response == 'l':
 			return self.chooseSpaceDecomp()
-		if self.response =='n':
+		if response =='n':
 			print('You will now create a new calculation.')
 			return self.createCalculation()
 	
@@ -32,42 +22,36 @@ class Calculation:
 	
 
 	def chooseCalculation():
-		return 'We have not coded save and write yet'
 		#We let them load a calculation from the Calculations folder, and see which Calculations are in the Calculation folder
-		#self.calculation = whatever the user chooses
-		#return self.calculation
+		#calculation = whatever the user chooses
+		#return calculation
+		return 'We have not coded save and write yet'
+		
 
 
 
 	def createCalculation():
-		#Get a space decomposition
-		sd=SpaceDecomp()
-		spaceDecomp=sd.spaceDecompLoadOrNew()
-		
-		#Get a velocity set for this space decomposition
-		vel = Velocities()
-		velocities = vel.velocitiesLoadOrNew(spaceDecomp)
-		
+
 		#get start and end points within this space decomposition
 		sae = StartAndEnd
 		startAndEnd = sae.createStartAndEnd(spaceDecomp)
 		
 		#With these three specifications, the optimal path problem is well defined
-		situation = [spaceDecomp,velocities,startAndEnd]
+		input = [situation,startAndEnd]
 		
-		self.calculation = optimization(situation)
+		calculation = self.optimization(input)
 		
 		saveOption = raw_input('Enter s to save this calculation. Enter anything else to move on. ')
 		if saveOption == 's':
 			print('Saving calculations is not a feature yet. ')
 			
-		return self.calculation
+		return calculation
 
 
-	def optimization(situation):
+	def Optimization(input):
 		#This classifies and enumerates all paths in our space decomposition from the start point to the end point
 		#In fact, it only classifies the ones worthy of consideration
-		paths = situation[0][2].all_paths(situation[2][0],situation[2][1])
+		paths = input[0][0][2].all_paths(input[1][0][1],input[1][1][1])
 		
 		#for each path in the array paths, the next bit will define a function based off the velocity sets and number of paths
 		#Then it will optimize the function (constrained to only choose boundary points between the regions in the path) 
