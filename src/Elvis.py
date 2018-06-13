@@ -1,10 +1,12 @@
 from sage.all import *
-from SpaceDecomp import *
+from Calculations import *
 class Elvis:
 	
 	def main():
-		sd=SpaceDecomp()
-		spaceDecomp=sd.SpaceDecompChoice()
+		calc=Calculations()
+		calculation=calc.calculationLoadOrNew()
+		calc.handleCalculation(calculation)
+		
 		
 	if __name__ == "__main__":
 		main()
