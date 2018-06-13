@@ -1,22 +1,15 @@
 from sage.all import *
 class SpaceDecomp:
-	global response
-	response =""
-	global spaceDecomp
-	spaceDecomp=[]
-	def __init__(self):
-		self.response = response
-		self.spaceDecomp= spaceDecomp
 	
 	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	The method will return the resulting space decomposition back to createCalculation.
 	def spaceDecompLoadOrNew(self):
-		self.response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
-		while self.response !='l' and self.response !='n':
+		response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
+		while response !='l' and response !='n':
 			print('This is not a valid input. Please type l/n: ')
-			self.response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
-		if self.response == 'l':
+			response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
+		if response == 'l':
 			return self.chooseSpaceDecomp()
-		if self.response =='n':
+		if response =='n':
 			print('You will now create a new space decomposition.')
 			return self.createSpaceDecomp()
 	
@@ -114,12 +107,12 @@ class SpaceDecomp:
 		adjmatrix=Matrix(adjarray)	
 		adjGraph=Graph(adjmatrix)
 		adjGraph.set_vertices(regionDictionary)
-		self.spaceDecomp =[d,n,adjGraph]
+		spaceDecomp =[d,n,adjGraph]
 		
 		saveOption = raw_input('Enter s to save this spaceDecomposition. Enter anything else to move on. ')
 			if saveOption == 's':
 				print('Saving space decompositions is not a feature yet. ')
 				
-		return self.spaceDecomp
+		return spaceDecomp
 
 	
