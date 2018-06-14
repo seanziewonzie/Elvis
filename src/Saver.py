@@ -20,13 +20,13 @@ def Construct():
 		subprocess.call("start","cmd")
 		os.chdir(os.path.expanduser("%userprofile%"))
 		subprocess.call(["mkdir","Elvis"])
-		os.chdir(os.path.expanduser("%userprofile%/Documents/Elvis"))
+		os.chdir(os.path.expanduser("%userprofile%\Documents\Elvis"))
 		subprocess.call(["mkdir","Calculations"])
 		subprocess.call(["mkdir","Situations"])
-		os.chdir(os.path.expanduser("%userprofile%/Documents/Elvis/Situations"))
+		os.chdir(os.path.expanduser("%userprofile%\Documents\Elvis\Situations"))
 		subprocess.call(["mkdir","SpaceDecomp"])
 
-#def Save():
+def Save():
 
 
 if __name__ == "__main__":
