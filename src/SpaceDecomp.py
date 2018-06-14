@@ -1,28 +1,22 @@
 from sage.all import *
 class SpaceDecomp:
-	global response
-	response =""
-	global spaceDecomp
-	spaceDecomp=[]
-	def __init__(self):
-		self.response = response
-		self.spaceDecomp= spaceDecomp
 	
-		
-	def SpaceDecompChoice(self):
-		self.response =raw_input('Do you want to use a saved space decomposition? ')
-		while self.response !='y' and self.response !='n':
-			print('This is not a valid input. Please type y/n: ')
-			self.response =raw_input('Do you want to use a saved space decomposition? ')
-		if self.response == 'y':
-			print('We have not coded save and write yet')
-			#return self.chooseSpaceDecomp()
-		if self.response =='n':
+	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	The method will return the resulting space decomposition back to createCalculation.
+	def spaceDecompLoadOrNew(self):
+		response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
+		while response !='l' and response !='n':
+			print('This is not a valid input. Please type l/n: ')
+			response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
+		if response == 'l':
+			return self.chooseSpaceDecomp()
+		if response =='n':
 			print('You will now create a new space decomposition.')
 			return self.createSpaceDecomp()
-		
 	
+	def chooseSpaceDecomp():
+		return 'We have not coded save and write yet'
 	
+	#This method creates a new space decomposition and returns it.
 	def createSpaceDecomp(self):
 		d=(int)(input('What is the dimension? '))
 		n=(int)(input('How many regions? '))
@@ -105,6 +99,7 @@ class SpaceDecomp:
 				#The final entry is the adjanceny of i with itself, which we consider to be 0 for simplification 
 				adjrow.append(0)
 				adjarray.append(adjrow)
+		
 		keys=[]
 		for i in range(n):
 			keys.append(i)
@@ -112,7 +107,12 @@ class SpaceDecomp:
 		adjmatrix=Matrix(adjarray)	
 		adjGraph=Graph(adjmatrix)
 		adjGraph.set_vertices(regionDictionary)
-		self.spaceDecomp =[d,n,adjGraph]
-		return self.spaceDecomp
+		spaceDecomp =[d,n,adjGraph]
+		
+		saveOption = raw_input('Enter s to save this spaceDecomposition. Enter anything else to move on. ')
+			if saveOption == 's':
+				print('Saving space decompositions is not a feature yet. ')
+				
+		return spaceDecomp
 
 	
