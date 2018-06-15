@@ -1,7 +1,7 @@
 from sage.all import *
 from Calculation import *
 from SaveMessage import *
-from ErrorMessage import errorMessage
+from Elvis import errorMessage
 class Velocities:
 	def __init__(self,spaceDecomp):
 		self.spaceDecomp = spaceDecomp
