@@ -23,6 +23,6 @@ First, download and extract the zip file. Then, in your command line interface, 
 
 This script creates the folders where data will be saved. Then, change into `src` and type
 
-`sage regions.py`
+`sage Elvis.py`
 
 to run the program.
