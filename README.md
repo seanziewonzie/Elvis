@@ -21,7 +21,7 @@ First, download and extract the zip file. Then, in your command line interface, 
 
 `python setup.py`
 
-This script creates the folders where data will be saved. Then, type
+This script creates the folders where data will be saved. Then, change into `src` and type
 
 `sage regions.py`
 
