@@ -1,5 +1,5 @@
 from sage.all import *
-from ErrorMessage import errorMessage
+from Elvis import errorMessage
 class StartAndEnd:
 	def __init__(self,situation):
 		self.situation = situation
