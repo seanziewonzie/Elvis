@@ -51,7 +51,7 @@ class SpaceDecomp:
 			try:
 				global d
 				raw=raw_input('What is the dimension? ')	
-				d=int(d)
+				d=int(raw)
 			except:
 				if raw == 'q':
 					raise SystemExit
@@ -103,6 +103,8 @@ class SpaceDecomp:
 				adjArray.append([0])
 			else:
 				self.updateAdjacencyArray(i)
+			for j in range(i+1):
+				print adjArray[j]
 
 
 	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
@@ -183,16 +185,19 @@ class SpaceDecomp:
 						if kjPoly == ijPoly:
 							#Neither subsumes the other. Both adjacencies may still be necessary to consider.
 							pass
-						elif kjpoly & ijPoly == ijPoly:
+						elif kjPoly & ijPoly == ijPoly:
 							#The candidate intersection is subsumed.
 							adjacency = 0
 							break
-						else:
+						elif kjPoly & ijPoly == kjPoly:
 							#The candidate intersection subsumes the jk intersection. Stop considering the jk
 							#intersection, and continue to check with all other intersections that involve
 							#region j.
 							adjArray[j][k]=0
-							adjarray[k][j]=0
+							adjArray[k][j]=0
+						else:
+							#Their symmetric difference is nonempty. No adjacencies are thrown away.
+							pass
 			#If they do not intersect, they are not adjacent in the first place.
 			else:
 				adjacency=0
@@ -207,6 +212,7 @@ class SpaceDecomp:
 
 		#Update the adjacency matrix
 		adjArray.append(adjRow)
+
 
 
 	#This method returns takes the adjacency information about the regions and returns a properly labeled
@@ -227,6 +233,7 @@ class SpaceDecomp:
 
 
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
+<<<<<<< HEAD
 	def saveSpaceDecomp(self,spaceDecomp):
 		path = "SpaceDecomp_"+str(counter)
 		currDir = os.getcwd()
@@ -245,3 +252,8 @@ class SpaceDecomp:
 		print "SpaceDecomp_" + str(counter) + " saved to " + saveDir
 
 		counter++
+=======
+	def saveSpaceDecomp(self):
+		sm = SaveMessage('space decomposition')
+		sm.message()
+>>>>>>> 78a3347e6db9e91f1bd805c88472a992a6d52ad1
