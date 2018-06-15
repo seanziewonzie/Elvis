@@ -8,11 +8,11 @@ class Calculation:
 	def calculationLoadOrNew(self):
 		response =raw_input('\nPress 1 to load a calculation. \nPress 2 to create a new calculation. \n')
 		if response == 'q':
-			exit()
+			raise SystemExit
 		while response != '1' and response != '2':
 			response =raw_input('Please enter 1 or 2. \nPress 1 to load a calculation. \nPress 2 to create a new calculation. \n')
 			if response == 'q':
-				exit()
+				raise SystemExit
 		if response == '1':
 			return self.chooseSpaceDecomp()
 		if response =='2':
@@ -28,7 +28,7 @@ class Calculation:
 
 		response = raw_input('\nEnter 1 to perform another action with this calculation. \nEnter 2 to get go back to the beginning. \n')
 		if response == 'q':
-			exit()
+			raise SystemExit
 		return response
 
 	
@@ -50,20 +50,20 @@ class Calculation:
 		startAndEnd = sae.createStartAndEnd()
 		
 		#With these three specifications, the time function is well defined
-		input = [situation,startAndEnd]
-		calculation = self.Optimization(input)
+		problem = [situation,startAndEnd]
+		calculation = self.Optimization(problem)
 		
 		self.saveCalculation()
 			
 		return calculation
 
 
-	#Given an input, this method will find the path in the situation from the start point to the endpoint which
+	#Given a problem, this method will find the path in the situation from the start point to the endpoint which
 	#minimizes the time function.
-	def Optimization(self,input):
+	def Optimization(self,problem):
 		#This classifies and enumerates all paths in our space decomposition from the start point to the end point
 		#In fact, it only classifies the ones worthy of consideration
-		paths = input[0][0][2].all_paths(input[1][0][1],input[1][1][1])
+		paths = problem[0][0][2].all_paths(problem[1][0][1],problem[1][1][1])
 		print paths
 		p = len(paths)
 		if p == 0:

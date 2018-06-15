@@ -1,4 +1,6 @@
 import sys; sys.dont_write_bytecode = True
+import inflect
+ordinator=inflect.engine()
 from sage.all import *
 from SaveMessage import *
 from ErrorMessage import *
@@ -8,11 +10,11 @@ class SpaceDecomp:
 	def spaceDecompLoadOrNew(self):
 		response =raw_input('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
 		if response == 'q':
-			exit()	
+			raise SystemExit	
 		while response!= '1' and response != '2':
 			response = raw_input('Please enter 1 or 2. \nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
 			if response == 'q':
-				exit()	
+				raise SystemExit	
 		if response == '1':
 			return self.chooseSpaceDecomp()
 		if response =='2':
@@ -28,11 +30,9 @@ class SpaceDecomp:
 	#This method creates a new space decomposition.
 	def createSpaceDecomp(self):
 		self.get_d_And_n()
-
-
 		self.createRegionsAndAdjacency()
 
-		adjGraph = self.makeGraph(adjArray,regions,n)
+		adjGraph = self.makeGraph()
 		spaceDecomp =[d,n,adjGraph]
 	
 		self.saveSpaceDecomp()		
@@ -45,8 +45,11 @@ class SpaceDecomp:
 		while True:
 			try:
 				global d
-				d=(int)(input('What is the dimension? '))
+				raw=raw_input('What is the dimension? ')	
+				d=int(d)
 			except:
+				if raw == 'q':
+					raise SystemExit
 				err=ErrorMessage()
 				err.errorMessage()
 				continue
@@ -55,8 +58,11 @@ class SpaceDecomp:
 		while True:
 			try:	
 				global n
-				n=(int)(input('How many regions? '))
+				raw=raw_input('How many regions? ')
+				n = (int)(raw)
 			except:
+				if raw == 'q':
+					raise SystemExit	
 				err=ErrorMessage()
 				err.errorMessage()
 				continue
@@ -75,8 +81,8 @@ class SpaceDecomp:
 			#Construct a region. Before adding it to regions, check that it is defined by halfspaces of the correct dimension,
 			#and that it it does not overlap with previous regions.
 			while True:
-				candidatePoly = self.createCandidate(d,i)
-				overlap= self.checkOverlap(candidatePoly,regions,i,d)
+				candidatePoly = self.createCandidate(i)
+				overlap= self.checkOverlap(candidatePoly,i)
 				if overlap[0] == True:
 					print ('This region overlaps with region ' + str(overlap[1]+1) +'. Try again.')
 				else:
@@ -91,19 +97,19 @@ class SpaceDecomp:
 			if i==0:
 				adjArray.append([0])
 			else:
-				self.updateAdjacencyArray(adjArray,regions,i)
+				self.updateAdjacencyArray(i)
 
 
 	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
-	def createCandidate(self,d,i):
-		hspaces=[]
+	def createCandidate(self,i):
+		hSpaces=[]
 		while True:
 			try:
-				m=input('\nHow many halfspaces cut out region '+str(i+1)+'? ')
-				if m == 'q':
-					exit()
-				m = (int)(m)
+				raw=raw_input('\nHow many halfspaces cut out region '+str(i+1)+'? ')
+				m = (int)(raw)
 			except:
+				if raw == 'q':
+					raise SystemExit
 				err=ErrorMessage()
 				err.errorMessage()
 				continue
@@ -114,39 +120,33 @@ class SpaceDecomp:
 			while True:
 				#Get a halfspace from the user
 				try:
-					if j==0:
-						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'st halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n').split(" ") 
-					elif j==1:
-						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'nd halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n').split(" ") 
-					elif j==2:
-						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'rd halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n').split(" ") 
-					else:
-						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'th halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... anxn <= 0 \n').split(" ") 
-					if rawnums == 'q':
-						exit()	
-					hspace = [float(num) for num in rawnums]
+					rawNums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n')
+					splitNums = rawNums.split(" ")
+					hSpace = [float(num) for num in splitNums]
 				except:
+					if rawNums == 'q':
+						raise SystemExit
 					err=ErrorMessage()
 					err.errorMessage()
 					continue
 
 				#Check if it is the right dimension.
-				if len(hspace) != d+1:
+				if len(hSpace) != d+1:
 					print('This list is the wrong length. Try again.')
 				else:
 					break
 			
 			#Add the halfspace to the list of halfspaces
-			hspaces.append(hspace)
+			hSpaces.append(hSpace)
 
 		#Make a polyhedron out of these halfspaces.
-		candidatePoly = Polyhedron(ieqs = hspaces)
+		candidatePoly = Polyhedron(ieqs = hSpaces)
 
 		return candidatePoly
 
 
 	#This method will check if the proposed region i overlaps with any previous region.
-	def checkOverlap(self,candidatePoly,regions,i,d):
+	def checkOverlap(self,candidatePoly,i):
 		overlap = [False]
 		for j in range(i):
 			p = candidatePoly&regions[j]
@@ -157,7 +157,7 @@ class SpaceDecomp:
 
 
 	#This method will update the array of **relevant** adjacencies given this new region i.
-	def updateAdjacencyArray(self,adjArray,regions,i):
+	def updateAdjacencyArray(self,i):
 		adjRow=[]
 		for j in range(i):
 			#Check if the region intersects with any other region.
@@ -197,7 +197,6 @@ class SpaceDecomp:
 			adjRow.append(adjacency)
 			adjArray[j].append(adjacency)
 
-
 		#The final entry is the adjanceny of i with itself, which we consider to be 0 for simplification 
 		adjRow.append(0)
 
@@ -207,7 +206,7 @@ class SpaceDecomp:
 
 	#This method returns takes the adjacency information about the regions and returns a properly labeled
 	#graph.
-	def makeGraph(self,adjArray,regions,n):
+	def makeGraph(self):
 		#Make a graph from the adjacency matrix.
 		adjmatrix=Matrix(adjArray)	
 		adjGraph=Graph(adjmatrix)

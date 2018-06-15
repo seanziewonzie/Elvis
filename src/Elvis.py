@@ -8,7 +8,7 @@ class Elvis:
 	def firstChoice(self):
 		response = raw_input('\nEnter 1 to get a calculation. \nEnter 2 to get a situation. \n')
 		if response == 'q':
-			exit()
+			raise SystemExit
 		while response != '1' and response != '2':
 			response =raw_input('Please enter 1 or 2. \nEnter 1 to get a calculation. \nEnter 2 to get a situation. \n')
 		#Get a calculation, and handle it until the user asks to return to the beginning.
@@ -27,7 +27,7 @@ class Elvis:
 			self.firstChoice()
 
 	def welcomeMessage(self):
-		print('Thank you for using Elvis. \nEnter q at any time to quit.')
+		print('\n      ------------------------------\n       Thank you for using Elvis. \n      Enter q at any time to quit.\n      ------------------------------\n')
 
 
 	def main(self):

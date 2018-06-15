@@ -26,10 +26,10 @@ class StartAndEnd:
 		while True:
 			try:
 				rawCoords=raw_input('\nWhat are the coordinates of the ' +string +'ing point? \n').split(" ")
-				if rawCoords == 'q':
-					exit()
 				coords = [float(num) for num in rawCoords]
 			except:
+				if rawCoords == 'q':
+					raise SystemExit
 				err=ErrorMessage()
 				err.errorMessage()
 				continue
