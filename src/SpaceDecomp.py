@@ -1,6 +1,6 @@
 from sage.all import *
 from SaveMessage import *
-from ErrorMessage import errorMessage
+from Elvis import errorMessage
 class SpaceDecomp:
 	
 	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	
