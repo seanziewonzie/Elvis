@@ -53,7 +53,7 @@ class Situation:
 		if response == 'q':
 			raise SystemExit	
 		while response != 1 and response !=2 and response !=3:
-			print('Please enter 1 or 2 or 3. \nEnter 1 to view text about this situation. \nEnter 2 to edit this situation. \nEnter 3 to go back to the beginning. \n')
+			response = raw_input('Please enter 1 or 2 or 3. \nEnter 1 to view text about this situation. \nEnter 2 to edit this situation. \nEnter 3 to go back to the beginning. \n')
 			if response == 'q':
 				raise SystemExit	
 		if response == 1:
