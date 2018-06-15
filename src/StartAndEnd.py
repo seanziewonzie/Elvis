@@ -1,8 +1,9 @@
 from sage.all import *
-from Elvis import errorMessage
+from ErrorMessage import *
 class StartAndEnd:
 	def __init__(self,situation):
 		self.situation = situation
+
 
 	#This method bundles all the information about the start and end points into one array.
 	def createStartAndEnd(self):
@@ -24,14 +25,18 @@ class StartAndEnd:
 		while True:
 			try:
 				rawCoords=raw_input('\nWhat are the coordinates of the ' +string +'ing point? \n').split(" ")
+				if rawCoords == 'q':
+					exit()
 				coords = [float(num) for num in rawCoords]
 			except:
-				errorMessage()
-
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
 			#This point will have to prove that it is sensible and that it is contained in some region.
 			contained = 0
-			if len(rawCoords)!=d:
-				print('The '+ string +'ing point should be specified by ' + str(d) + 'coordinates. Try again. ')
+			if len(coords)!=d:
+				print('The '+ string +'ing point should be specified by ' + str(d) + ' coordinates. Try again. ')
+				continue
 			else:
 				#Get the first region the point is contained in. 
 				for i in  range(n):
@@ -40,7 +45,7 @@ class StartAndEnd:
 						contained = 1
 						region = i 
 						break
-			#If the points was actually not contained in any region, this process will loop until the point is valid.
+			#If the point was actually not contained in any region, this process will loop until the point is valid.
 			if contained ==1:
 				break
 			else:

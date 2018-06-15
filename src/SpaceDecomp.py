@@ -1,64 +1,72 @@
 from sage.all import *
 from SaveMessage import *
-from Elvis import errorMessage
+from ErrorMessage import *
 class SpaceDecomp:
-	
 	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	
 	#This method will return the resulting space decomposition back to createCalculation.
 	def spaceDecompLoadOrNew(self):
-		try:
-			response =raw_input('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
-			if response == '1':
-				return self.chooseSpaceDecomp()
-			if response =='2':
-				print('\nYou will now create a new space decomposition.')
-				return self.createSpaceDecomp()
-			break
-		except:
-			errorMessage()
+		response =raw_input('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
+		if response == 'q':
+			exit()	
+		while response!= '1' and response != '2':
+			response = raw_input('Please enter 1 or 2. \nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
+			if response == 'q':
+				exit()	
+		if response == '1':
+			return self.chooseSpaceDecomp()
+		if response =='2':
+			print('\nYou will now create a new space decomposition.')
+			return self.createSpaceDecomp()
 	
 	
-
 	def chooseSpaceDecomp(self):
-		return 'We have not coded save and write yet'
+		print('We have not coded save and write yet')
+		return []
 	
 
 	#This method creates a new space decomposition.
 	def createSpaceDecomp(self):
 		self.get_d_And_n()
 
-		global regions
-		global adjArray
+
 		self.createRegionsAndAdjacency()
 
 		adjGraph = self.makeGraph(adjArray,regions,n)
-
 		spaceDecomp =[d,n,adjGraph]
-		
-		self.saveSpaceDecomp()
-				
+	
+		self.saveSpaceDecomp()		
 		return spaceDecomp
 
 
 	#This method prompts the user for the dimension of space being simulated
 	#and the number of polyhedral regions the space has been decomposed into.
 	def get_d_And_n(self):
-		try:
-			global d
-			d=(int)(input('What is the dimension? '))
-		except:
-			errorMessage()
+		while True:
+			try:
+				global d
+				d=(int)(input('What is the dimension? '))
+			except:
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
 
-		try:	
-			global n
-			n=(int)(input('How many regions? '))
-		except:
-			errorMessage()
+		while True:
+			try:	
+				global n
+				n=(int)(input('How many regions? '))
+			except:
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
 
 
 	#This method creates the polyhedral regions and updates a matrix which logs the
 	#**relevant** adjacencies
 	def createRegionsAndAdjacency(self):
+		global regions
+		global adjArray
 		regions = []
 		adjArray = []
 
@@ -88,10 +96,17 @@ class SpaceDecomp:
 	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
 	def createCandidate(self,d,i):
 		hspaces=[]
-		try:
-			m=(int)(input('\nHow many halfspaces cut out region '+str(i+1)+'? '))
-		except:
-			errorMessage()
+		while True:
+			try:
+				m=input('\nHow many halfspaces cut out region '+str(i+1)+'? ')
+				if m == 'q':
+					exit()
+				m = (int)(m)
+			except:
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
 
 		#Get the list of halfspaces that will together cut out the proposed region i.	
 		for j in range(m):
@@ -106,17 +121,20 @@ class SpaceDecomp:
 						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'rd halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n').split(" ") 
 					else:
 						rawnums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'th halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... anxn <= 0 \n').split(" ") 
+					if rawnums == 'q':
+						exit()	
 					hspace = [float(num) for num in rawnums]
-					break
 				except:
-					errorMessage()
+					err=ErrorMessage()
+					err.errorMessage()
+					continue
 
 				#Check if it is the right dimension.
 				if len(hspace) != d+1:
 					print('This list is the wrong length. Try again.')
 				else:
 					break
-
+			
 			#Add the halfspace to the list of halfspaces
 			hspaces.append(hspace)
 
@@ -124,7 +142,6 @@ class SpaceDecomp:
 		candidatePoly = Polyhedron(ieqs = hspaces)
 
 		return candidatePoly
-
 
 
 	#This method will check if the proposed region i overlaps with any previous region.

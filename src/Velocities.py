@@ -1,11 +1,12 @@
 from sage.all import *
 from Calculation import *
 from SaveMessage import *
-from Elvis import errorMessage
+from ErrorMessage import *
 class Velocities:
 	def __init__(self,spaceDecomp):
 		self.spaceDecomp = spaceDecomp
 	
+
 	def velocitiesLoadOrNew(self):
 		#if there are some velocity sets associated with this spaceDecomp, run this
 			#self.response =raw_input('\nPress 1 to load a velocity set associated with this space decompostion. \nPress 2 to create a new velocity set associated with this space decompostion. ')
@@ -21,14 +22,13 @@ class Velocities:
 		print('There are no velocity sets associated with this space decomposition. You will now create one. ')
 		return self.createVelocities()
 		
-		
-		
+			
 	def chooseVelocities(self):
 		#Here the user will have the option of seeing the velocity sets saved under this spaceDecomp folder, and choosing one file
 		#velocity = whichever file they choose
 		#return velocity
-		
-		return 'We have not coded the saving and loading of velocity sets yet.' 
+		print('We have not coded the saving and loading of velocity sets yet.' )
+		return []
 		
 
 	#This method will create a new velocity set for this space decomposition.
@@ -42,22 +42,25 @@ class Velocities:
 				try:
 					#For now, velocity sets are just sphere, defined by a real number. This method will have to be rewritten to accept 
 					#any function in hyperspherical coordinates.
-					input = (float)(raw_input('\nEnter a positive real number to indicate the velocity associated with region ' +str(i+1) +'. \n'))
-					if input > 0:
-						break
-					else:
-						print('This is not a positive number. ')
+					input = raw_input('\nEnter a positive real number to indicate the velocity associated with region ' +str(i+1) +'. \n')
+					if input == 'q':
+						exit()	
+					input = (int)(input)
 				except:
-					print('Something went wrong. Try again. ')
+					err=ErrorMessage()
+					err.errorMessage()
+					continue
+				#Check that the number is positive before breaking the loop.	
+				if input > 0:
+					break
+				else:
+					print('This is not a positive number. ')
 			velocities.append(input)
 
 		self.saveVelocitySet()
-
 		return velocities
 
 
 	def saveVelocitySet(self):
 		sm = SaveMessage('velocity set')
 		sm.message()
-
-		
