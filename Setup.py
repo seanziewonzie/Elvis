@@ -1,13 +1,13 @@
+import sys; sys.dont_write_bytecode = True
 import os
 import subprocess
 import platform
-
 def main():
 	Construct()
 	print platform.system()
 
-def Construct():
 
+def Construct():
 	yourOS = platform.system()
 	if yourOS == "Linux":
 		subprocess.call(["mkdir","Calculations"])
@@ -23,10 +23,5 @@ def Construct():
 		os.chdir(os.path.expanduser("%userprofile%\Documents\Elvis\Situations"))
 		subprocess.call(["mkdir","SpaceDecompExampleFolder"])
 
-	
-
-
-
 if __name__ == "__main__":
-	main()
-	
+	main()	

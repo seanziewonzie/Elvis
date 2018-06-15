@@ -38,3 +38,4 @@ The weighted region problem is stated as follows:
 
 ## Numerical approach to solving the problem
 
+## Make sure to extract Elvis into your Documents folder, then run Setup.py

@@ -1,118 +1,247 @@
+import sys; sys.dont_write_bytecode = True
+import inflect
+ordinator=inflect.engine()
 from sage.all import *
+from SaveMessage import *
+from ErrorMessage import *
+import os
+import errno
+import subprocess
 class SpaceDecomp:
-	
-	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	The method will return the resulting space decomposition back to createCalculation.
+	global counter
+	counter = 0
+	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	
+	#This method will return the resulting space decomposition back to createCalculation.
 	def spaceDecompLoadOrNew(self):
-		response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
-		while response !='l' and response !='n':
-			print('This is not a valid input. Please type l/n: ')
-			response =raw_input('Press l to load a space decomposition. Press n to create a new one. ')
-		if response == 'l':
+		response =raw_input('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
+		if response == 'q':
+			raise SystemExit	
+		while response!= '1' and response != '2':
+			response = raw_input('Please enter 1 or 2. \nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
+			if response == 'q':
+				raise SystemExit	
+		if response == '1':
 			return self.chooseSpaceDecomp()
-		if response =='n':
-			print('You will now create a new space decomposition.')
+		if response =='2':
+			print('\nYou will now create a new space decomposition.')
 			return self.createSpaceDecomp()
 	
-	def chooseSpaceDecomp():
-		return 'We have not coded save and write yet'
 	
-	#This method creates a new space decomposition and returns it.
-	def createSpaceDecomp(self):
-		d=(int)(input('What is the dimension? '))
-		n=(int)(input('How many regions? '))
-		#the array of regions
-		regions=[]
-		#the simplified/optimized adjacency graph of the regions
-		adjarray=[]		
-		for i in range(n):
-			while True:
-				#Get number of halfspaces which define the face.
-				m=(int)(input('How many halfspaces cut out region '+str(i+1)+'? '))
-				#Determine the halfspaces which define the face.
-				hspaces=[]
-				for j in range(m):
-					while True:
-						if j==0:
-							rawnums = raw_input('Give a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'st halfspace, where a0 a1 ... an indicates the halfspace corresponsing to the inqeuality a0 + a1x1 + ... anxn <= 0 \n').split(" ") 
-						elif j==1:
-							rawnums = raw_input('Give a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'nd halfspace, where a0 a1 ... an indicates the halfspace corresponsing to the inqeuality a0 + a1x1 + ... anxn <= 0 \n').split(" ") 
-						elif j==2:
-							rawnums = raw_input('Give a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'rd halfspace, where a0 a1 ... an indicates the halfspace corresponsing to the inqeuality a0 + a1x1 + ... anxn <= 0 \n').split(" ") 
-						else:
-							rawnums = raw_input('Give a list of ' + str(d + 1) + ' numbers to indicate the ' +str(j+1) +'th halfspace, where a0 a1 ... an indicates the halfspace corresponsing to the inqeuality a0 + a1x1 + ... anxn <= 0 \n').split(" ") 
-						#will take in a string of numbers separated by a space
-						if len(rawnums) != d+1:
-							#This checks if the halfspace is the right dimension
-							print('This list is the wrong length. Try again.')
-						else:
-							break
-					hspace = [float(num) for num in rawnums]
-					hspaces.append(hspace)
-				#The user will keep inputting the region until it does not intersect with previous regions
-				overlap=0
-				for j in range(0,i):
-					p=Polyhedron(ieqs=hspaces + regions[j])
-					if p.dim()>=d:
-						print('This region overlaps with region ' + str(j+1) +'. Try again.')
-						overlap=1
-						break
-				if overlap == 0:
-					break
-			regions.append(hspaces)
-			adjrow=[]
-			#This will constantly update the graph so that two regions are adjacent if and only if their intersection is not subsumed by another intersection
-			if i==0:
-				adjarray.append([0])
-			else:
-				for j in range(i):
-					#This will check the possible adjacency of the new region and another region
-					ijPoly=Polyhedron(ieqs=regions[i]+regions[j])
-					if p.dim()>=0:
-						adjacency=1
-						#Check against every other adjacency and see if this new adjacency is subsumed by it, or subsumes it
-						for k in range(i):
-							if adjarray[j][k]==0:
-								adjacency=1
-								#no need to check against an adjacency which doesn't exist
-							if adjarray[j][k]==1:
-								kjPoly=Polyhedron(ieqs=regions[k]+regions[j])
-								if kjPoly&ijPoly==ijPoly:
-									adjacency=adjacency*0
-								if kjPoly&ijPoly==kjPoly:=[d,n,adjGraph]
-									adjacency=adjacency*1
-									adjarray[k][j]=0
-									adjarray[j][k]=0
-								if kjPoly!=ijPoly:
-									if kjPoly&ijPoly==ijPoly:
-										adjacency=0
-										print('The intersection of ' + str(i) +' and ' + str(j) + ' is subsumed by the intersection of regions ' + str(k) + ' and ' + str(j))
-										break
-									if kjPoly&ijPoly==kjPoly:
-										adjarray[k][j]=0
-										adjarray[j][k]=0
+	def chooseSpaceDecomp(self):
+		print('We have not coded save and write yet')
+		return []
+	
 
-					else:
-						adjacency=0
-						print('Regions ' + str(i) + ' and ' + str(j) + ' dont intersect')
-					adjrow.append(adjacency)
-					adjarray[j].append(adjacency)
-				#The final entry is the adjanceny of i with itself, which we consider to be 0 for simplification 
-				adjrow.append(0)
-				adjarray.append(adjrow)
-		
+	#This method creates a new space decomposition.
+	def createSpaceDecomp(self):
+		self.get_d_And_n()
+		self.createRegionsAndAdjacency()
+
+		adjGraph = self.makeGraph()
+		self.spaceDecomp =[d,n,adjGraph]
+	
+		self.saveSpaceDecomp(self.spaceDecomp)		
+		return spaceDecomp
+
+
+	#This method prompts the user for the dimension of space being simulated
+	#and the number of polyhedral regions the space has been decomposed into.
+	def get_d_And_n(self):
+		while True:
+			try:
+				global d
+				raw=raw_input('What is the dimension? ')	
+				d=int(d)
+			except:
+				if raw == 'q':
+					raise SystemExit
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
+
+		while True:
+			try:	
+				global n
+				raw=raw_input('How many regions? ')
+				n = (int)(raw)
+			except:
+				if raw == 'q':
+					raise SystemExit	
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
+
+
+	#This method creates the polyhedral regions and updates a matrix which logs the
+	#**relevant** adjacencies
+	def createRegionsAndAdjacency(self):
+		global regions
+		global adjArray
+		regions = []
+		adjArray = []
+
+		for i in range(n):
+			#Construct a region. Before adding it to regions, check that it is defined by halfspaces of the correct dimension,
+			#and that it it does not overlap with previous regions.
+			while True:
+				candidatePoly = self.createCandidate(i)
+				overlap= self.checkOverlap(candidatePoly,i)
+				if overlap[0] == True:
+					print ('This region overlaps with region ' + str(overlap[1]+1) +'. Try again.')
+				else:
+					break
+			regions.append(candidatePoly)
+
+			#This will constantly update the adjacency matrix so that two regions are considered adjacent if and only if 
+			#their intersection is not subsumed by another intersection.
+			#If an intersection is subsumed by another intersection, it will be considered as a subcase later when the program
+			#considers paths from intersection to intersection. So it may be thrown away to optimize the number of paths
+			#handled in the calculation
+			if i==0:
+				adjArray.append([0])
+			else:
+				self.updateAdjacencyArray(i)
+
+
+	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
+	def createCandidate(self,i):
+		hSpaces=[]
+		while True:
+			try:
+				raw=raw_input('\nHow many halfspaces cut out region '+str(i+1)+'? ')
+				m = (int)(raw)
+			except:
+				if raw == 'q':
+					raise SystemExit
+				err=ErrorMessage()
+				err.errorMessage()
+				continue
+			break
+
+		#Get the list of halfspaces that will together cut out the proposed region i.	
+		for j in range(m):
+			while True:
+				#Get a halfspace from the user
+				try:
+					rawNums = raw_input('\nGive a list of ' + str(d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n')
+					splitNums = rawNums.split(" ")
+					hSpace = [float(num) for num in splitNums]
+				except:
+					if rawNums == 'q':
+						raise SystemExit
+					err=ErrorMessage()
+					err.errorMessage()
+					continue
+
+				#Check if it is the right dimension.
+				if len(hSpace) != d+1:
+					print('This list is the wrong length. Try again.')
+				else:
+					break
+			
+			#Add the halfspace to the list of halfspaces
+			hSpaces.append(hSpace)
+
+		#Make a polyhedron out of these halfspaces.
+		candidatePoly = Polyhedron(ieqs = hSpaces)
+
+		return candidatePoly
+
+
+	#This method will check if the proposed region i overlaps with any previous region.
+	def checkOverlap(self,candidatePoly,i):
+		overlap = [False]
+		for j in range(i):
+			p = candidatePoly&regions[j]
+			if p.dim()>=d:
+				overlap.append(True)
+				overlap.append(j)
+		return overlap
+
+
+	#This method will update the array of **relevant** adjacencies given this new region i.
+	def updateAdjacencyArray(self,i):
+		adjRow=[]
+		for j in range(i):
+			#Check if the region intersects with any other region.
+			ijPoly=regions[i]&regions[j]
+			if ijPoly.dim()>=0:
+				#It does intersect with region j. It is possible that we will have to actually consider
+				#adjacency as important information.
+				adjacency = 1
+				#Check all other intersections that region j has.
+				for k in range(i):
+					if adjArray[j][k]==0:
+						#No need to check anything if j and k do not intersect.
+						pass
+					if adjArray[j][k]==1:
+						#j and k do intersect. Does the candidate intersection subsume this intersection?
+						#Does this intersection subsume the candidate intersection?
+						kjPoly=regions[k]&regions[j]
+						if kjPoly == ijPoly:
+							#Neither subsumes the other. Both adjacencies may still be necessary to consider.
+							pass
+						elif kjpoly & ijPoly == ijPoly:
+							#The candidate intersection is subsumed.
+							adjacency = 0
+							break
+						else:
+							#The candidate intersection subsumes the jk intersection. Stop considering the jk
+							#intersection, and continue to check with all other intersections that involve
+							#region j.
+							adjArray[j][k]=0
+							adjarray[k][j]=0
+			#If they do not intersect, they are not adjacent in the first place.
+			else:
+				adjacency=0
+			
+			#Update the row to indicate whether or not, for now, we are considering the ij adjacency
+			#as important.
+			adjRow.append(adjacency)
+			adjArray[j].append(adjacency)
+
+		#The final entry is the adjanceny of i with itself, which we consider to be 0 for simplification 
+		adjRow.append(0)
+
+		#Update the adjacency matrix
+		adjArray.append(adjRow)
+
+
+	#This method returns takes the adjacency information about the regions and returns a properly labeled
+	#graph.
+	def makeGraph(self):
+		#Make a graph from the adjacency matrix.
+		adjmatrix=Matrix(adjArray)	
+		adjGraph=Graph(adjmatrix)
+
+		#Label the vertices with the appropriate region.
 		keys=[]
 		for i in range(n):
 			keys.append(i)
 		regionDictionary=dict(zip(keys,regions))
-		adjmatrix=Matrix(adjarray)	
-		adjGraph=Graph(adjmatrix)
 		adjGraph.set_vertices(regionDictionary)
-		spaceDecomp =[d,n,adjGraph]
-		
-		saveOption = raw_input('Enter s to save this spaceDecomposition. Enter anything else to move on. ')
-			if saveOption == 's':
-				print('Saving space decompositions is not a feature yet. ')
-				
-		return spaceDecomp
 
-	
+		return adjGraph
+
+
+	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
+	def saveSpaceDecomp(self,spaceDecomp):
+		path = "SpaceDecomp_"+str(counter)
+		currDir = os.getcwd()
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
+		subprocess.call(["mkdir",path])
+		os.chdir(os.path.expanduser(path))
+		saveDir = os.getcwd()
+		
+		sdFile = open("Regions_Dimensions_and_Graph.txt","w+")
+		sdFile.write("Number_of_Dimensions: " + str(self.spaceDecomp[0]) + "\n")
+		sdFile.write("Number_of_Regions: " + str(self.spaceDecomp[1]) + "\n")
+		sdFile.write("Graph: " + str(self.spaceDecomp[3]) + "\n")
+		sdFile.close()
+		
+		os.chdir(os.path.expanduser(currDir))
+		print "SpaceDecomp_" + str(counter) + " saved to " + saveDir
+
+		counter++
