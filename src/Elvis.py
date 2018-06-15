@@ -1,7 +1,6 @@
 from sage.all import *
 from Calculation import *
 from Situation import *
-from ErrorMessage import errorMessage
 class Elvis:
 	
 
@@ -32,7 +31,10 @@ class Elvis:
 			while response != '3':
 				response = sit.viewOrEditSituation(situation)
 			self.main()
-
+			
+	#The error message for all caught exceptions.		
+	def errorMessage():
+		print('\nSomething about that was not right. Try again. \n')
 		
 	if __name__ == "__main__":
 		main()
