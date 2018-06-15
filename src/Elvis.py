@@ -1,30 +1,38 @@
 from sage.all import *
 from Calculation import *
 from Situation import *
+from ErrorMessage import errorMessage
 class Elvis:
 	
+
 	def main():
-		response = raw_input('\nEnter c to get a calculation. \nEnter s to get a situation. \n')
-		while response !='c' and response !='s':
-			print('This is not a valid input. Please type c/s: ')
-			response =raw_input('\nEnter c to create or load a calculation. \nEnter s to view or edit a created situation, or create a new situation. \n')
-		if response == 'c':
+		self.firstChoice()
+
+
+	#In Elvis, there are two kinds of objects which are stored on the memory drive: situations and calculations.
+	#This method will ask the user which kind of object they wish to deal with.
+	def firstChoice(self):
+		response = raw_input('\nEnter 1 to get a calculation. \nEnter 2 to get a situation. \n')
+		while response != 1 and response != 2:
+			response =raw_input('Please enter 1 or 2. \nEnter 1 to get a calculation. \nEnter 2 to get a situation. \n')
+			#Get a calculation.
+
+		#Get a calculation, and handle it until the user asks to return to the beginning.
+		if response == '1':
 			calc=Calculation()
 			calculation=calc.calculationLoadOrNew()
-			calc.handleCalculation(calculation)
-		if response =='s':
-			response = raw_input('\nEnter c to create a situation. \nEnter v to view information about a saved situation. \nEnter e to edit a saved situation. \n')
-			while response !='c' and response !='v' and response != 'e':
-				print('This is not a valid input. Please type c/v/e: ')
-				response =raw_input('\nEnter c to create a situation. \n Enter v to view information about a saved situation. \nEnter e to edit a saved situation. \n')
-			sit = Situation()
-			if response == 'c':
-				sit.createSituation()
-			if response =='e':
-				sit.editSituation()
-			if response == 'v':
-				return 'We have not yet coded a way to view a created situation'
-	
+			while response == '1':
+				response = calc.handleCalculation(calculation)
+			self.main()
+
+		#Get a situation, and either view or edit it until the user asks to return to the beginning.
+		if response =='2':
+			sit=Situation()
+			situation=sit.situationLoadOrNew()
+			while response != '3':
+				response = sit.viewOrEditSituation(situation)
+			self.main()
+
 		
 	if __name__ == "__main__":
 		main()
