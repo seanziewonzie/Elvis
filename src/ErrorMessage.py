@@ -1,3 +1,4 @@
+import sys; sys.dont_write_bytecode = True
 class ErrorMessage():
 	#The error message for all caught exceptions.
 	def errorMessage(self):

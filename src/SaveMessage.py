@@ -1,3 +1,4 @@
+import sys; sys.dont_write_bytecode = True
 class SaveMessage:
 	def __init__(self,string):
 		self.string = string

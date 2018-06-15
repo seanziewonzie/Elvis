@@ -1,3 +1,4 @@
+import sys; sys.dont_write_bytecode = True
 from sage.all import *
 from Calculation import *
 from SaveMessage import *
