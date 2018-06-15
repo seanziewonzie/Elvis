@@ -2,7 +2,6 @@ from sage.all import *
 from Situation import *
 from StartAndEnd import *
 from SaveMessage import *
-from ErrorMessage import errorMessage
 class Calculation:
 	
 	#The user will be asked if they want to utilize a calculation which has previously been made or if they want to make a new one.	
