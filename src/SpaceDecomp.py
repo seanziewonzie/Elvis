@@ -7,6 +7,7 @@ from ErrorMessage import *
 import os
 import errno
 import subprocess
+
 class SpaceDecomp:
 	global counter
 	counter = 0
@@ -235,25 +236,21 @@ class SpaceDecomp:
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
 <<<<<<< HEAD
 	def saveSpaceDecomp(self,spaceDecomp):
-		path = "SpaceDecomp_"+str(counter)
+		spaceDecompName = raw_input("Name your Space Decomp: ")
 		currDir = os.getcwd()
 		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
-		subprocess.call(["mkdir",path])
-		os.chdir(os.path.expanduser(path))
+		subprocess.call(["mkdir",spaceDecompName])
+		os.chdir(os.path.expanduser(spaceDecompName))
 		saveDir = os.getcwd()
 		
-		sdFile = open("Regions_Dimensions_and_Graph.txt","w+")
+		sdFile = open("Space_Decomp_Info","w+")
 		sdFile.write("Number_of_Dimensions: " + str(self.spaceDecomp[0]) + "\n")
 		sdFile.write("Number_of_Regions: " + str(self.spaceDecomp[1]) + "\n")
 		sdFile.write("Graph: " + str(self.spaceDecomp[3]) + "\n")
 		sdFile.close()
 		
 		os.chdir(os.path.expanduser(currDir))
-		print "SpaceDecomp_" + str(counter) + " saved to " + saveDir
+		print spaceDecompName + " saved to " + saveDir
 
-		counter++
-=======
-	def saveSpaceDecomp(self):
-		sm = SaveMessage('space decomposition')
-		sm.message()
->>>>>>> 78a3347e6db9e91f1bd805c88472a992a6d52ad1
+	
+
