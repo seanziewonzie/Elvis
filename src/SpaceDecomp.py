@@ -104,8 +104,7 @@ class SpaceDecomp:
 				adjArray.append([0])
 			else:
 				self.updateAdjacencyArray(i)
-			for j in range(i+1):
-				print adjArray[j]
+
 
 
 	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
@@ -234,7 +233,6 @@ class SpaceDecomp:
 
 
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
-<<<<<<< HEAD
 	def saveSpaceDecomp(self,spaceDecomp):
 		spaceDecompName = raw_input("Name your Space Decomp: ")
 		currDir = os.getcwd()
