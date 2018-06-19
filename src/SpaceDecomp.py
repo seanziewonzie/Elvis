@@ -234,21 +234,40 @@ class SpaceDecomp:
 
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
 	def saveSpaceDecomp(self,spaceDecomp):
-		spaceDecompName = raw_input("Name your Space Decomp: ")
+		spaceDecompName = raw_input("\nName your Space Decomp: ")
 		currDir = os.getcwd()
 		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
-		subprocess.call(["mkdir",spaceDecompName])
-		os.chdir(os.path.expanduser(spaceDecompName))
-		saveDir = os.getcwd()
 		
-		sdFile = open("Space_Decomp_Info","w+")
+		try:
+			subprocess.call(["mkdir",spaceDecompName])
+			os.chdir(os.path.expanduser(spaceDecompName))
+			saveDir = os.getcwd()
+		except OSError as e:
+			if e.errno == errno.EEXIST:
+				while(e.errno == errno.EEXIST):
+					saveattempt = raw_input("**Already a saved file, try again: **") 
+					subprocess.call(["mkdir",saveattempt])
+					os.chdir(os.path.expanduser(saveattempt))
+					saveDir = os.getcwd()
+		
+
+		sdFile = open("Space_Decomp_Info.txt","w+")
 		sdFile.write("Number_of_Dimensions: " + str(self.spaceDecomp[0]) + "\n")
 		sdFile.write("Number_of_Regions: " + str(self.spaceDecomp[1]) + "\n")
-		sdFile.write("Graph: " + str(self.spaceDecomp[3]) + "\n")
+		sdFile.write("Adjanceny Graph: \n")
+		textGraph = self.adjArr
+		for j in range(self.spaceDecomp[1]):
+			sdFile.write(str(textGraph[j]) + "\n")
+
 		sdFile.close()
+
+		imageGraph = self.spaceDecomp[2]
+		imageGraph.plot().save("Graph.png")
+		
+		
 		
 		os.chdir(os.path.expanduser(currDir))
-		print spaceDecompName + " saved to " + saveDir
+		print "**" + spaceDecompName + " saved to " + saveDir + "**"
 
 	
 
