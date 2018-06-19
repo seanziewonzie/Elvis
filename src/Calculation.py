@@ -49,7 +49,7 @@ class Calculation:
 		sae = StartAndEnd(situation)
 		startAndEnd = sae.createStartAndEnd()
 		
-		#With these three specifications, the time function is well defined
+		#With these three specifications, the time function is well defined.
 		problem = [situation,startAndEnd]
 		calculation = self.Optimization(problem)
 		
@@ -62,29 +62,120 @@ class Calculation:
 	#minimizes the time function.
 	def Optimization(self,problem):
 		#This classifies and enumerates all paths in our space decomposition from the start point to the end point
-		#In fact, it only classifies the ones worthy of consideration
+		#In fact, it only classifies the ones worthy of consideration.
 		paths = problem[0][0][2].all_paths(problem[1][0][1],problem[1][1][1])
 		print paths
 		p = len(paths)
 		if p == 0:
 			print('\nThere are no paths between the starting point and the ending point.\n')
 			return []
-		for i in range(p):
-			print('\nWe have not yet coded a way to find an optimal path. \n')
-			return []
-			#Calculus goes here
+		else:
+			optimalPaths = []
+			optimalTimes = []
+			for k in range(p):
+				path = paths[k]
+				l = len(path)
+				#declare the d*(p+1) variables/degrees of freedom which represent the coordinates of the points in
+				#the intersections of the polyhedra in the path.
+				xs = [var('x_'+str(i)+"_"+str(j)) for i in range(l+1) for j in range(d)]
+				#T is the function to minimize
+				T = 0
+				for i in range(l):
+					#The following loop builds an expression for the distance between one chosen point and the next.
+					sqDist=0
+					for j in range(d):
+						sqDist = sqDist[i] + (xs[i+1][j]-xs[i][j])^2
+					#The time that one piece of the path contributes (depends on distance and velocity).
+					t = (1/problem[0][1][i])*sqrt(sqDist)
+					#Add it to the total time function
+					T = T + t
+				constraints=[]
+				#Constrain the first d variables to be the correspond to the coordinates of the starting point.
+				for j in range(d):
+					constraints.append(xs[0][j] - problem[1][0][0][j])
+					constraints.append(problem[1][0][0][j] - xs[0][j])
+				#Constrain the last d variables to be the correspond to the coordinates of the ending point.
+				for j in range(d):
+					constraints.append(xs[l][j] - problem[1][1][0][j])
+					constraints.append(problem[1][1][0][j] - xs[l][j])
+				#Constain the i-th d-tuple of variables so that they together represent a point which is contained in
+				#the intersection of the i-1-th and i-th polyhedron in the path.
+				if l >= 2:
+					for i in range(1,l): 
+						#Get the intersection of polyhedron which this i-th point must lie in.
+						exitPoly = problem[0][0][2].get_vertex[i-1]
+						enterPoly = problem[0][0][2].get_vertex[i]
+						intersection = exitPoly&enterPoly
+						#Get the inequalities which define this polyhedron, and apply them to the i-th point.
+						constraintsForPoint = getConstraintsForPoint(intersection,xs)
+						#Add this constraint to the running list of constraints.
+						constraints = constraints + constraintsForPoint
+				#Get an initial point to do the optimization from.
+				initialPoint = []
+				for j in range(d):
+					initialPoint.append(problem[1][0][0][j])
+				for i in range(l):
+					exitPoly = problem[0][0][2].get_vertex[i-1]
+					enterPoly = problem[0][0][2].get_vertex[i]
+					intersection =exitPoly&enterPoly
+					referencePoint = intersection.representative_point()
+					for j in range(d):
+						intialPoint.append(referencePoint[j])
+				for j in range(d):
+					initialPoint.append(problem[1][1][0][j])
+				optimalInput = minimize_constrained(T,constraints,initialPoint)
+				optimalPath = []
+				for i in range(l+1):
+					optimalPath.append(optimalInput[d*i:d*(i+1)])
+				optimalPaths.append(optimalPath)
+				inputArray=[]
+				#Figure out how to actually plug the minimal point into the function
+				optimalTime = T.subs(x[i][j]=optimalPath[i][j])
+				optimalTimes.append(optimalTime)
+			bestTime = optimalTimes.min()
+			bestPath = optimalTimes.argmin()
+			best = [bestTime,bestPath]
+			return [best,problem]
 
-		#for each path in the array paths, the next bit will define a function based off the velocity sets and number of paths
-		#Then it will optimize the function (constrained to only choose boundary points between the regions in the path) 
-		#Specifically, it will find the sequence of boundary points which causes the best time, and the time in particular
-		
-		#From this for loop, we will generate an array of duples - each duple indicates the choice of boundary points and the time they cause
-		
-		#Find the best time from all the elements in the array
-		
-		#optimalAnswer will be the duple with the best time
-		
-		#return optimalAnswer
+
+
+
+	#Get the 					
+	def getConstraintsForPoint(self,intersection,xs):	
+		#Get a representation of the inequalities which bound this polyhedron.			
+		a = intersection.Hrepresentation()
+		length = len(a)
+		array = []
+		for i in range(length):
+			#The Hrepresentation is a weird object that is an array of some sort of pickled strings describing
+			#the hspaces in prose, rather than just as numbers. This will unpack it into an easy-to-use array.
+			string = str(a[i])
+			b = string.split(" ")
+			b = b[2:-2]
+			b[0] = b[0][1:-1]
+			for j in range(d-1):
+				b[j+1] = b[j+1][:-1]
+			b.remove('x')
+			#With this new array, generate an expression which would represent what exactly is >=0 in this inequality.
+			constraint = 0
+			for j in range(d):
+				constaint = constraint + float(b[j])*xs[i][j]
+			if b[d+1] == '+':
+				constraint = constraint + float(b[d+1])
+			if b[d-1] == '-':
+				constraint = constraint - float(b[d+1])
+			#If it is an equality, break it up into two over-determined inequalities. Add the inequalit(y/ies) to the array
+			#of constraints.
+			if "equation" in str(a[i]):
+				array.append(constraint)
+				negConstraint = (-1)*constraint
+				array.append(negConstraint)
+			if "inequality" in str(a[i]):
+				array.append(constraint)
+		return array
+				
+
+
 
 
 	def saveCalculation(self):
