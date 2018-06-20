@@ -44,7 +44,7 @@ class Velocities:
 					#For now, velocity sets are just sphere, defined by a real number. This method will have to be rewritten to accept 
 					#any function in hyperspherical coordinates.
 					rawNumber = raw_input('\nEnter a positive real number to indicate the velocity associated with region ' +str(i+1) +'. \n')
-					speed = (int)(rawNumber)
+					speed = (float)(rawNumber)
 				except:
 					if rawNumber == 'q':
 						raise SystemExit	
@@ -56,9 +56,9 @@ class Velocities:
 					break
 				else:
 					print('This is not a positive number. ')
-			velocities.append(input)
+			velocities.append(speed)
 
-		self.saveVelocitySet()
+		#self.saveVelocitySet()
 		return velocities
 
 
