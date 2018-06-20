@@ -41,8 +41,8 @@ class SpaceDecomp:
 		adjGraph = self.makeGraph()
 		self.spaceDecomp =[d,n,adjGraph]
 	
-		self.saveSpaceDecomp(self.spaceDecomp)		
-		return spaceDecomp
+		#self.saveSpaceDecomp(self.spaceDecomp)		
+		return self.spaceDecomp
 
 
 	#This method prompts the user for the dimension of space being simulated
