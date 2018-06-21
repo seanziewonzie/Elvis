@@ -268,6 +268,3 @@ class SpaceDecomp:
 		
 		os.chdir(os.path.expanduser(currDir))
 		print "**" + spaceDecompName + " saved to " + saveDir + "**"
-
-	
-
