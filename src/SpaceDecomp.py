@@ -8,6 +8,7 @@ import os
 import errno
 import subprocess
 import re
+import platform
 
 
 class SpaceDecomp:
@@ -19,6 +20,7 @@ class SpaceDecomp:
 		self.n = 0
 		self.adjArray = []
 		self.name = ""
+		self.loadedArrayString = ""
 
 	def spaceDecompLoadOrNew(self):
 		response =raw_input('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
@@ -39,47 +41,39 @@ class SpaceDecomp:
 
 		os.chdir(os.path.expanduser("~/Documents/Elvis/Situations"))
 		print "\nYour saved Space Decompositions\n"
-		print "-----------"
-		subprocess.call("ls")
-		print "-----------\n"
+		if platform.system() == "Linux":
+			subprocess.call("ls")
+		elif platform.system() == "Windows":
+			subprocess.call("dir /s")
 		while(True):
 			try:
 				chosenDecomp = raw_input("Select a Space Decomposition (case sensitive): ")
 				os.chdir(os.path.expanduser(chosenDecomp))
-				print "OK.....Done"
 				break
 			except OSError as e:
 				if e.errno == errno.ENOENT:
 					print "---That file does not exist, retry---"
-		print "\n" + chosenDecomp 
-		print "-----------\n"
+	
 		chosenDecompFile = open("Space_Decomp_Info.txt","r")
-		subprocess.check_output(["xdg-open","Graph.png"], stderr=subprocess.STDOUT)
-		adjArray = []
 
 		global counter
 		counter = 1
+		arrayString = ""
 		for line in chosenDecompFile:
 			if counter == 1:
 				self.n = int(re.search(r'\d+',line).group())
-			elif line == 2:
+			elif counter == 2:
 				self.d = int(re.search(r'\d+',line).group())
-			else:
-				adjArray.append(line)
+			elif counter > 3:
+				arrayString = line + arrayString
 			counter = counter + 1
 
-		self.adjArray = adjArray
+		chosenDecompFile.close()
+		self.loadedArrayString = arrayString
 
-		print "Regions: " + str(self.n)
-		print "Dimensions: " + str(self.d)
-		print "Adjanceny Graph: \n"
-		for j in range(len(self.adjArray)):
-			print self.adjArray[j]
-		correctSpaceDecomp = raw_input("\nUse this SpaceDecomp?(y/n): ")
-		#if correctSpaceDecomp == y:
-
-
-
+		print "regions --> " + str(self.n)
+		print "dims --> " + str(self.d)
+		print "adjanceny --> " + self.loadedArrayString
 	#This method creates a new space decomposition.
 	def createSpaceDecomp(self):
 		self.getDimensionsAndRegions()
@@ -88,7 +82,15 @@ class SpaceDecomp:
 		adjGraph = self.makeGraph()
 		self.spaceDecomp =[self.d,self.n,adjGraph]
 	
-		#self.saveSpaceDecomp(self.spaceDecomp)		
+
+		save = raw_input("Save this Space Decomp(y/n): ")
+		while(True):
+			if save == "y":
+				self.saveSpaceDecomp(self.spaceDecomp)
+				break
+			elif save != "y" or save != "n":
+				save = raw_input("Error, type either y or n, retry: ")		
+
 
 		return self.spaceDecomp
 
@@ -150,7 +152,8 @@ class SpaceDecomp:
 				adjArray.append([0])
 			else:
 				self.updateAdjacencyArray(i)
-		self.adjArray=adjArray
+			for j in range(i+1):
+				print adjArray[j]
 
 
 	#This method will get the halspaces that define a region, but it will check that the halfspaces are sensible.
@@ -258,6 +261,7 @@ class SpaceDecomp:
 
 		#Update the adjacency matrix
 		adjArray.append(adjRow)
+		self.adjArray = adjArray
 
 
 	#This method returns takes the adjacency information about the regions and returns a properly labeled
@@ -295,33 +299,29 @@ class SpaceDecomp:
 		currDir = os.getcwd()
 		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
 		try:
-			subprocess.call(["mkdir",self.name])
+			os.makedirs(self.name)
 			os.chdir(os.path.expanduser(self.name))
 			saveDir = os.getcwd()
 		except OSError as e:
-			if e.errno == errno.EEXIST:
-				while(e.errno == errno.EEXIST):
-					self.name = raw_input("ERROR... Already a saved file, try again: ") 
-					subprocess.call(["mkdir",self.name])
-					os.chdir(os.path.expanduser(self.name))
-					saveDir = os.getcwd()
+			if e.errno != errno.EEXIST:
+				raise
+			else:	
+				self.name = raw_input("ERROR... Already a saved Decomposition, try again: \n") 
+				os.makedirs(self.name)
+				os.chdir(os.path.expanduser(self.name))
+				saveDir = os.getcwd()
 		
 		sdFile = open("Space_Decomp_Info.txt","w+")
 		sdFile.write("Number_of_Dimensions: " + str(self.spaceDecomp[0]) + "\n")
 		sdFile.write("Number_of_Regions: " + str(self.spaceDecomp[1]) + "\n")
 		sdFile.write("Adjanceny Graph: \n")
 
-		textGraph = self.adjArr
-		for j in range(self.spaceDecomp[1]):
+		textGraph = self.adjArray
+		for j in range(self.n):
 			sdFile.write(str(textGraph[j]) + "\n")
 		sdFile.close()
 
-		imageGraph = self.spaceDecomp[2]
-		imageGraph.plot().save(self.name + "_Graph.png")
-
 		os.chdir(os.path.expanduser(currDir))
-		print "OK... " + self.name + " saved to " + saveDir
-
+		print  self.name + " saved to " + saveDir
 
 	
-

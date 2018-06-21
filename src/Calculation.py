@@ -299,3 +299,4 @@ class Calculation:
 	def saveCalculation(self):
 		sm = SaveMessage('calculation')
 		sm.message()
+		
