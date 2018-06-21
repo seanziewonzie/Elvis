@@ -3,6 +3,7 @@ from sage.all import *
 from Situation import *
 from StartAndEnd import *
 from SaveMessage import *
+import numpy as np
 class Calculation:
 	#The user will be asked if they want to utilize a calculation which has previously been made or if they want to make a new one.	
 	def calculationLoadOrNew(self):
@@ -62,7 +63,7 @@ class Calculation:
 		#A calculation has information about both the problem and its solution.
 		calculation = [problem,solution]
 		
-		#self.saveCalculation()
+		self.saveCalculation()
 			
 		return calculation
 
@@ -97,32 +98,36 @@ class Calculation:
 				path = paths[k]
 				l = len(path)
 				
-				#Declare the d*(p+1) variables/degrees of freedom which represent the coordinates of the points in
-				#the intersections of the polyhedra in the path. xs is a 2D array of variables.
-				xs = [[var('x_'+str(i)+"_"+str(j)) for j in range(d)] for i in range(l+1)]
-				
-				#T is the function to minimize.
-				T=self.functionToMinimize(l,d,velocities,xs)
-				
+
+
+				#T is the function to minimize. Get it and turn it into a lambda function.
+				T=self.functionToMinimize(l,d,velocities)
+				S = lambda x: eval(T)
+
 				#Get the constraints this function must be minimized over. We only care about points which are in the 
-				#correct interfaces.
-				constraints=self.getConstraints(xs,l,d,adjGraph,startCoords,endCoords)
+				#correct interfaces. Turn them into lambda functions.
+				constraints=self.getConstraints(l,d,adjGraph,startCoords,endCoords)
+				lambdas_list =[]
+				for i in range(len(constraints)):
+					lambdas_list.append(self.build_lambdas(constraints,i))
 
 				#Get an initial point to do the optimization from.
 				initialPoint = self.generateIntialPoint(l,d,adjGraph,startCoords,endCoords)
 
 				#This actually calculates where the function is minimized
-				optimalInput = minimize_constrained(T,constraints,initialPoint)
+				optimalInput = minimize_constrained(S,lambdas_list,initialPoint)
+
+				#Get the optimal time by actually plugging the optimal path into the time function. Now the 2D array of
+				#input numbers will take the role of the 2D array of variables, and the functionToMinimize method will 
+				#return a value, not a symbolic function
+				optimalTime = S(optimalInput)
 
 				#This packs the path into a more readable 2D array rather than one long array.
 				optimalPath = []
 				for i in range(l+1):
 					optimalPath.append(optimalInput[d*i:d*(i+1)])
 
-				#Get the optimal time by actually plugging the optimal path into the time function. Now the 2D array of
-				#input numbers will take the role of the 2D array of variables, and the functionToMinimize method will 
-				#return a value, not a symbolic function
-				optimalTime = self.functionToMinimize(l,d,velocities,optimalPath)
+
 				
 				#Add the optimalPath to the running list of optimal paths.
 				optimalPaths.append(optimalPath)
@@ -131,15 +136,23 @@ class Calculation:
 				optimalTimes.append(optimalTime)
 
 			#Get the best time from the best times of all classes of paths, and the path which causes it.	
-			bestTime = optimalTimes.min()
-			bestPathNum = optimalTimes.argmin()
+			bestTime = np.min(optimalTimes)
+			bestPathNum = np.argmin(optimalTimes)
 			bestPath = optimalPaths[bestPathNum]
 
+			#Print the best path.
 			length= len(bestPath)
+			print('The best path is as follows:')
 			for i in range(length):
+				if i== 0:
+					print('\nStart at')
+				elif i== length:
+					print('and end at')
+				else:
+					print('and head to')
 				print bestPath[i]
 
-			print bestTime
+			print('\nThe best time is: '+ str(bestTime))
 
 			#Package them together and return.
 			solution = [bestTime,bestPath]
@@ -148,38 +161,49 @@ class Calculation:
 	
 	#This function will build a mathematical expression of the time a path from the starting point to the ending point takes 
 	#in the situation.
-	def functionToMinimize(self,l,d,velocities,xs):
-		T = 0
+	def functionToMinimize(self,l,d,velocities):
+		T = '0'
 		for i in range(l):
 			#The following loop builds an expression for the distance between one chosen point and the next.
-			sqDist=0
+			sqDist='0'
 			for j in range(d):
-				sqDist = sqDist + (xs[i+1][j]-xs[i][j])**2
+				sqDist = sqDist + '+(x[' +str(d*(i+1)+j)+ ']-x[' +str(d*i+j)+ '])**2'
 			
 			#The time that one piece of the path contributes (depends on distance and velocity).
-			t = (1.0/velocities[i])*sqrt(sqDist)
+			t = '(1.0/' +str(velocities[i])+ ')*sqrt(' + sqDist + ')'
 			
 			#Add it to the total time function
-			T = T + t
+			T = T+ '+' +t
 		return T
 
 
 	#This will generate an array of "expressions" which correspond to inequalities involving the variables x_i_j. These inequalities
 	#will force the function to only be minimized over the class of paths which go between the correct interfaces ("correct" meaning
 	#corresponding to the class of paths under consideration).
-	def getConstraints(self,xs,l,d,adjGraph,startCoords,endCoords):
+	def getConstraints(self,l,d,adjGraph,startCoords,endCoords):
 		constraints=[]
 		#Constrain the first d variables to be the correspond to the coordinates of the starting point. Cast the constraint as
 		#a function expression.
 		for j in range(d):
-			constraints.append((xs[0][j] - startCoords[j]).function(xs[0][j]))
-			constraints.append((startCoords[j] - xs[0][j]).function(xs[0][j]))
+			startConstraint1='x['+str(j)+'] -' + str(startCoords[j])
+
+			constraints.append(startConstraint1)
+
+			startConstraint2=str(startCoords[j]) +' - x['+str(j)+']'
+
+			constraints.append(startConstraint2)
 		
+
 		#Constrain the last d variables to be the correspond to the coordinates of the ending point. Cast the constraint as
 		#a function expression.
 		for j in range(d):
-			constraints.append((xs[l][j] - endCoords[j]).function(xs[l][j]))
-			constraints.append((endCoords[j] - xs[l][j]).function(xs[l][j]))
+			endConstraint1='x['+str(l*d+j)+'] -' + str(endCoords[j])
+			constraints.append(endConstraint1)
+
+
+			endConstraint2=str(endCoords[j]) +'- x['+str(l*d+j)+']'
+
+			constraints.append(endConstraint2)
 
 		#Constain the i-th d-tuple of variables so that they together represent a point which is contained in
 		#the intersection of the i-1-th and i-th polyhedron in the path.
@@ -190,24 +214,24 @@ class Calculation:
 				enterPoly = adjGraph.get_vertex(i)
 				intersection = exitPoly&enterPoly
 				#Get the inequalities which define this polyhedron, and apply them to the i-th point.
-				constraintsForPoint = self.getConstraintsForSpecificPoint(intersection,xs,i,d)
+				constraintsForPoint = self.getConstraintsForSpecificPoint(intersection,i,d)
 				#Add this constraint to the running list of constraints.
 				constraints = constraints + constraintsForPoint
 		
 		#Cast the function expressions to "function_type"s. This currently is not working.
-		return [(lambda *argv: c(*tuple(argv))) for c in constraints]
+		return constraints
 
 
 	#Get the numerical expressions determined by the polyhedral interface this specific point must lie in to get the constraint.
-	def getConstraintsForSpecificPoint(self,intersection,xs,i,d):	
+	def getConstraintsForSpecificPoint(self,intersection,i,d):	
 		#Get a representation of the inequalities which bound this polyhedron.			
 		a = intersection.Hrepresentation()
 		length = len(a)
 		array = []
-		for i in range(length):
+		for m in range(length):
 			#The Hrepresentation is a weird object that is an array of some sort of pickled strings describing
 			#the hspaces in prose, rather than just as numbers. This will unpack it into an easy-to-use array.
-			string = str(a[i])
+			string = str(a[m])
 			b = string.split(" ")
 			b = b[2:-2]
 			b[0] = b[0][1:-1]
@@ -216,30 +240,36 @@ class Calculation:
 			b.remove('x')
 			
 			#With this new array, generate an expression which would represent what exactly is >=0 in this inequality.
-			constraint = 0
+			constraint = '0'
+			negConstraint='0'
 			for j in range(d):
-				constraint = constraint + float(b[j])*xs[i][j]
-			
-			#Cast the constraint as a function expression.
-			constraint = constraint.function(*tuple(xs[i]))
+				constraint = constraint + '+' + str(float(b[j])) +'*x['+str(d*i+j)+']'
+				negConstraint = negConstraint + '-' + str(float(b[j])) +'*x['+str(d*i+j)+']'
 			
 			#Add the final constant to the function expression.
-			if b[d+1] == '+':
-				constraint = constraint + float(b[d+1])
-			if b[d-1] == '-':
-				constraint = constraint - float(b[d+1])
+			if b[d] == '+':
+				constraint = constraint + '+ ' +str(float(b[d+1]))
+				negConstraint = negConstraint + '- ' +str(float(b[d+1]))
+			if b[d] == '-':
+				constraint = constraint + '- '+ str(float(b[d+1]))
+				negConstraint = negConstraint + '+ '+ str(float(b[d+1]))
+
 
 			#If it is an equality, break it up into two over-determined inequalities. Add the inequalit(y/ies) to the array
 			#of constraints.
-			if "equation" in str(a[i]):
+			if "equation" in str(a[m]):
 				array.append(constraint)
-				negConstraint = (-1)*constraint
 				array.append(negConstraint)
-			if "inequality" in str(a[i]):
+			if "inequality" in str(a[m]):
 				array.append(constraint)
 		return array
 				
 	
+	#Convert constraints into lambdas.
+	def build_lambdas(self,constraints,i):
+		return lambda x: eval(constraints[i])
+
+
 	#This will generate an inital point to begin the optimization process.			
 	def generateIntialPoint(self,l,d,adjGraph,startCoords,endCoords):
 		initialPoint = []
@@ -269,3 +299,4 @@ class Calculation:
 	def saveCalculation(self):
 		sm = SaveMessage('calculation')
 		sm.message()
+		
