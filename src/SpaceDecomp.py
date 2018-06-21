@@ -82,17 +82,14 @@ class SpaceDecomp:
 
 	#This method creates a new space decomposition.
 	def createSpaceDecomp(self):
-		self.name = raw_input("Name your Space Decomp: ")
 		self.getDimensionsAndRegions()
 		self.createRegionsAndAdjacency()
 
 		adjGraph = self.makeGraph()
 		self.spaceDecomp =[self.d,self.n,adjGraph]
 	
-		self.saveSpaceDecomp(self.spaceDecomp)		
+		#self.saveSpaceDecomp(self.spaceDecomp)		
 
-	#This method returns the spaceDecomp and its values, of the SpaceDecomp object
-	def getSpaceDecomp(self):
 		return self.spaceDecomp
 
 	#This method prompts the user for the dimension of space being simulated
@@ -294,6 +291,7 @@ class SpaceDecomp:
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
 	def saveSpaceDecomp(self,spaceDecomp):
 		#Save the Space Decomp to the file structure created when setup.py is run
+		self.name = raw_input("Name your Space Decomp: ")
 		currDir = os.getcwd()
 		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
 		try:
