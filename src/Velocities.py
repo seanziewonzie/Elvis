@@ -1,11 +1,8 @@
 import sys; sys.dont_write_bytecode = True
 from sage.all import *
-from Calculation import *
 import Message
 class Velocities:
-	def __init__(self,spaceDecomp):
-		self.spaceDecomp = spaceDecomp
-		self.spaceDecompName = spaceDecomp[3]
+	def __init__(self,sd):
 		self.velocities = []
 		self.name =""
 	
@@ -13,7 +10,7 @@ class Velocities:
 	#The user has decided to choose a velocity set associated with this space decomposition. This method will guide the user while they do so,
 	#and return the chosen velocity set.			
 	def chooseVelocities(self):
-		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+self.spaceDecompName+'/'))
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+sd.name+'/'))
 		print "\nYour saved velocity sets:\n"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
@@ -43,8 +40,7 @@ class Velocities:
 	#This method will create and return a new velocity set for this space decomposition.
 	def createVelocities(self):
 		#There will be exactly one velocity set associated to each region in the space decomposition.
-		n = self.spaceDecomp[1]
-		for i in range(n):
+		for i in range(sd.n):
 			while True:
 				#The user will be prompted to enter a valid velocity set.
 				try:
@@ -85,7 +81,7 @@ class Velocities:
 	def saveVelocitySet(self):
 		#Save the velocity set as a 
 		currDir = os.getcwd()
-		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + self.spaceDecompName +'/'))
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + sd.name +'/'))
 		saveDir = os.getcwd()
 		while True:
 			self.name = raw_input("Name your Velocity Set. Do not use 'q': ")
