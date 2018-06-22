@@ -2,34 +2,37 @@ import sys; sys.dont_write_bytecode = True
 from sage.all import *
 from Situation import *
 from StartAndEnd import *
-from SaveMessage import *
 import numpy as np
+
 class Calculation:
+	def __init__(self):
+		self.calculation = []
+
+
 	#The user will be asked if they want to utilize a calculation which has previously been made or if they want to make a new one.	
 	def calculationLoadOrNew(self):
-		response =raw_input('\nPress 1 to load a calculation. \nPress 2 to create a new calculation. \n')
-		if response == 'q':
-			raise SystemExit
-		while response != '1' and response != '2':
-			response =raw_input('Please enter 1 or 2. \nPress 1 to load a calculation. \nPress 2 to create a new calculation. \n')
-			if response == 'q':
-				raise SystemExit
-		if response == '1':
-			return self.chooseSpaceDecomp()
-		if response =='2':
-			print('\nYou will now create a new calculation.')
-			return self.createCalculation()
+		while True:
+			reponse = Message.getResponse('\nPress 1 to load a calculation. \nPress 2 to create a new calculation. \n')
+			if response != '1' and response != '2':
+				print 'Please enter 1 or 2.'
+				continue
+			if response == '1':
+				self.chooseCalculation()
+			if response =='2':
+				self.createCalculation()
+		return self.calculation
 
 
 	#With calculation in hand, the user will have the option to do something with it.
 	#Currently there are no options.
 	#Potential actions: plotting, merging to calculations together to plot them together, deleting, renaming.		
 	def handleCalculation(self,calculation):
-		print('We have not coded any options to handle calculations')
-		response = raw_input('\nEnter 1 to perform another action with this calculation. \nEnter 2 to get go back to the beginning. \n')
-		if response == 'q':
-			raise SystemExit
-		return response
+		while True:
+			print 'We have not coded any options to handle calculations'
+			response = Message.getResponse('\nEnter 1 to perform another action with this calculation. \nEnter anything else to get go back to the beginning. \n')
+			if response == 1:
+				continue
+			break
 
 	
 	#We let them load a calculation from the Calculations folder (and to help them, they can see which calculations are in the Calculation folder).
@@ -61,11 +64,9 @@ class Calculation:
 		solution = self.Optimization(problem)
 
 		#A calculation has information about both the problem and its solution.
-		calculation = [problem,solution]
+		self.calculation = [problem,solution]
 		
 		self.saveCalculation()
-			
-		return calculation
 
 
 	#Given a problem, this method will find the path in the situation from the start point to the endpoint which
@@ -74,7 +75,7 @@ class Calculation:
 		#Unpack all the necessary information.
 		d=problem[0][0][0]
 		adjGraph=problem[0][0][2]
-		velocities = problem[0][1]
+		velocities = problem[0][1][0]
 		startRegion=problem[1][0][1]
 		endRegion=problem[1][1][1]
 		startCoords=problem[1][0][0]
@@ -297,6 +298,28 @@ class Calculation:
 
 
 	def saveCalculation(self):
-		sm = SaveMessage('calculation')
-		sm.message()
-		
+		while True:
+			self.name = raw_input("Name your calculation: ")
+			currDir = os.getcwd()
+			os.chdir(os.path.expanduser('~/Documents/Elvis/Calculations'))
+			try:
+				os.makedirs(self.name)
+				os.chdir(os.path.expanduser(self.name))
+				saveDir = os.getcwd()
+			except OSError as e:
+				if e.errno != errno.EEXIST:
+					Message.errorMessage()
+				else:	
+					print "ERROR... Already a saved calculation, try again: \n"
+				continue
+			break
+
+		sdFile = open("Space_Decomp_Info.txt","w+")
+		sdFile.write(str(self.d + "\n"))
+		sdFile.write(str(self.n))
+		sdFile.write(str(self.adjArray))
+		sdFile.write(str(self.regionsText))
+
+		sdFile.close()
+		os.chdir(os.path.expanduser(currDir))
+		print  self.name + " saved to " + saveDir
