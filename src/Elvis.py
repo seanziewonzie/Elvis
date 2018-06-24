@@ -7,7 +7,7 @@ import Message
 def firstChoice():
 	#Keep looping the program from the beginning until the user quits somewhere.
 	while True:
-		response = Message.getResponse('\nEnter 1 to get a calculation. \nEnter 2 to get a situation. \n')
+		response = Message.getResponse('\nEnter 1 to deal with a calculation. \nEnter 2 to deal with a situation. \n')
 		if response != '1' and response != '2':
 			print 'Please enter 1 or 2.' 
 			continue

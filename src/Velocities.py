@@ -1,16 +1,23 @@
 import sys; sys.dont_write_bytecode = True
 from sage.all import *
+import os
+import errno
+import subprocess
+import re
+import platform
 import Message
+import ast
 class Velocities:
 	def __init__(self,sd):
 		self.velocities = []
 		self.name =""
+		self.sd=sd
 	
 
 	#The user has decided to choose a velocity set associated with this space decomposition. This method will guide the user while they do so,
 	#and return the chosen velocity set.			
 	def chooseVelocities(self):
-		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+sd.name+'/'))
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+self.sd.name+'/'))
 		print "\nYour saved velocity sets:\n"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
@@ -18,21 +25,26 @@ class Velocities:
 			subprocess.call("dir /s")
 
 		while(True):
+			chosenVelFile = Message.getResponse("Select a velocity file (case sensitive): ")
 			try:
-				chosenVelFile = raw_input("Select a velocity set (case sensitive): ")
-				os.chdir(os.path.expanduser(chosenVelFile))
+				with open(chosenVelFile,"r") as file:
+					content = file.readlines()
 				break
 			except OSError as e:
-				if chosenVelFile == 'q':
-					print 'quitting...'
-					raise SystemExit
+				pass
+			try:
+				with open(chosenVelFile+'.text',"r") as file:
+					content = file.readlines()
+				break
+			except OSError as e:
 				if e.errno == errno.ENOENT:
-					print "---That file does not exist, retry---"
+					print "---That velocity file does not exist, retry---"
+				else:
+					Message.errorMessage()
+		content = [x.strip() for x in content]
+		self.name = content[0]
+		self.velocities = ast.literal_eval(content[1])
 
-		with open(chosenVelFile,"r") as file:
-			content = file.readlines()
-		self.velocities = ast.literal_eval(content)
-		self.name = chosenVelFile
 
 
 		
@@ -40,7 +52,7 @@ class Velocities:
 	#This method will create and return a new velocity set for this space decomposition.
 	def createVelocities(self):
 		#There will be exactly one velocity set associated to each region in the space decomposition.
-		for i in range(sd.n):
+		for i in range(self.sd.n):
 			while True:
 				#The user will be prompted to enter a valid velocity set.
 				try:
@@ -61,44 +73,33 @@ class Velocities:
 					print('This is not a positive number. ')
 			self.velocities.append(speed)
 
-		save = raw_input("Save this Space Decomp(y/n): ")
-		if save == 'q':
-			print 'quitting...'
-			raise SystemExit
-		while(True):
-			if save != "y" or save != "n":
-				save = raw_input("Error, type either y or n, retry: ")
-				if save == 'q':
-					raise SystemExit
+		if self.sd.name != "":
+			save = Message.getResponse("Save this velocity set(y/n): ")
+			while save != "y" and save != "n":
+				save = Message.getResponse("Error, type either y or n, retry: ")
 			if save == "y":
-				self.saveVelocitySet(self.velocities)
-				break
+				self.saveVelocitySet()
 
 
-
-
-
+	#Save a velocity set file in the folder associated to the relevant space decomposition.
 	def saveVelocitySet(self):
 		#Save the velocity set as a 
 		currDir = os.getcwd()
-		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + sd.name +'/'))
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + self.sd.name +'/'))
 		saveDir = os.getcwd()
 		while True:
-			self.name = raw_input("Name your Velocity Set. Do not use 'q': ")
-			if self.name == 'q':
-				print 'quitting...'
-				raise SystemExit	
+			self.name = Message.getResponse("Name your velocity set. Do not use 'q': ")
 			try:
-				sdFile = open(self.name+'.vs',"w+")
+				velFile = open(self.name+'.text',"w+")
 			except OSError as e:
 				if e.errno != errno.EEXIST:
 					Message.errorMessage()
 				else:	
-					print "ERROR... Already a saved Decomposition, try again: \n"
+					print "ERROR... Already a saved velocity set. \n"
 				continue
 			break
-
-		sdFile.write(str(self.velocities))
-		sdFile.close()
+		velFile.write(self.name + "\n")
+		velFile.write(str(self.velocities))
+		velFile.close()
 		os.chdir(os.path.expanduser(currDir))
 		print  self.name + " saved to " + saveDir
