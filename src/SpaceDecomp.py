@@ -11,48 +11,47 @@ import platform
 import ast
 class SpaceDecomp:
 	def __init__(self):
+		self.name = ""
 		self.d = 0
 		self.n = 0
-		self.regionsText
+		self.regionsText = []
 		self.regionsPoly = []
 		self.adjArray = []
-		self.adjGraph = null
-		self.name = ""
-		self.spaceDecompText = []
-		self.spaceDecompBackend = []
+		self.adjGraph = None
+
 
 
 	#The user has decided to make a new calculation. They will now be asked if they want to make one from scratch or use a previous situation.	
 	#This method will return the resulting space decomposition back to createCalculation.
 	def spaceDecompLoadOrNew(self):
-		reponse = Message.getResponse('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
+		response = Message.getResponse('\nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
 		while response!= '1' and response != '2':
 			response = Message.getResponse('Please enter 1 or 2. \nPress 1 to load a space decomposition. \nPress 2 to create a new space decomposition. \n')
 		if response == '1':
-			return self.chooseSpaceDecomp()
+			self.chooseSpaceDecomp()
 		if response =='2':
 			print('\nYou will now create a new space decomposition.')
 			self.createSpaceDecomp()
-			return self.spaceDecomp
+
 
 
 	#This method loads a pre-existing Space Decompositons and prints relevant info to user.
 	def chooseSpaceDecomp(self):
 		os.chdir(os.path.expanduser("~/Documents/Elvis/Situations"))
-		print "\nYour saved Space Decompositions\n"
+		print "\nYour saved space decompositions\n"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
 		elif platform.system() == "Windows":
 			subprocess.call("dir /s")
 
 		while(True):
+			chosenDecomp = Message.getResponse("Select a space decomposition (case sensitive): ")
 			try:
-				chosenDecomp = Message.getResponse("Select a Space Decomposition (case sensitive): ")
 				os.chdir(os.path.expanduser(chosenDecomp))
 				break
 			except OSError as e:
 				if e.errno == errno.ENOENT:
-					print "---That file does not exist, retry---"
+					print "---That space decomposition does not exist, retry---"
 				else:
 					Message.errorMessage()
 
@@ -60,14 +59,13 @@ class SpaceDecomp:
 		with open("Space_Decomp_Info.txt","r") as file:
 			content = file.readlines()
 		content = [x.strip() for x in content]
-		self.d = (int)(content[0])
-		self.n = (int)(content[1])
-		self.adjArray = ast.literal_eval(content[2])
-		self.regionsText = ast.literal_eval(content[3])
-
+		self.name = content[0]
+		self.d = (int)(content[1])
+		self.n = (int)(content[2])
+		self.adjArray = ast.literal_eval(content[3])
+		self.regionsText = ast.literal_eval(content[4])
 		self.regionsPoly = [Polyhedron(ieqs = x) for x in self.regionsText]
 		self.makeGraph()
-		self.spaceDecompBackend = [self.d,self.n,self.adjGraph,self.name]
 
 
 
@@ -75,17 +73,15 @@ class SpaceDecomp:
 	def createSpaceDecomp(self):
 		self.getDimensionsAndRegions()
 		self.createRegionsAndAdjacency()
+		self.makeGraph()
 
-		save = Message.getResponse("Save this Space Decomp(y/n): ")
-		while save != "y" or save != "n":
+		save = Message.getResponse("Save this space decomposition(y/n): ")
+		while save != "y" and save != "n":
 			save = Message.getResponse("Error, type either y or n, retry: ")
 		if save == "y":
-			self.saveSpaceDecomp(self.spaceDecomp)
+			self.saveSpaceDecomp()
 				
 
-		self.makeGraph()
-		self.bundleSpaceDecomp()
-		self.spaceDecomp =[self.d,self.n,self.adjGraph,self.name]
 		
 
 	#This method prompts the user for the dimension of space being simulated
@@ -130,7 +126,7 @@ class SpaceDecomp:
 					print ('This region overlaps with region ' + str(overlap[1]+1) +'. Try again.')
 				else:
 					break
-			self.regionsText.append(hSpaces)
+			self.regionsText.append(candidateHSpaces)
 			self.regionsPoly.append(candidatePoly)
 
 			#This will constantly update the adjacency matrix so that two regions are considered adjacent if and only if 
@@ -264,7 +260,7 @@ class SpaceDecomp:
 
 
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
-	def saveSpaceDecomp(self,spaceDecomp):
+	def saveSpaceDecomp(self):
 		#Save the Space Decomp to the file structure created when setup.py is run
 		while True:
 			self.name = raw_input("Name your Space Decomp: ")
@@ -278,16 +274,16 @@ class SpaceDecomp:
 				if e.errno != errno.EEXIST:
 					Message.errorMessage()
 				else:	
-					print "ERROR... Already a saved Decomposition, try again: \n"
+					print "ERROR... Already a saved space decomposition. \n"
 				continue
 			break
 
 		sdFile = open("Space_Decomp_Info.txt","w+")
-		sdFile.write(str(self.d + "\n"))
-		sdFile.write(str(self.n))
-		sdFile.write(str(self.adjArray))
-		sdFile.write(str(self.regionsText))
-
+		sdFile.write(self.name + "\n")
+		sdFile.write(str(self.d) + "\n")
+		sdFile.write(str(self.n) + "\n")
+		sdFile.write(str(self.adjArray) + "\n")
+		sdFile.write(str(self.regionsText) + "\n")
 		sdFile.close()
 		os.chdir(os.path.expanduser(currDir))
 		print  self.name + " saved to " + saveDir
