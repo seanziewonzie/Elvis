@@ -39,7 +39,7 @@ class Calculation:
 
 	#With calculation in hand, the user will have the option to do something with it.
 	#Currently there are no options.
-	#Potential actions: plotting, merging to calculations together to plot them together, deleting, renaming.		
+	#Potential actions: plotting, merging two calculations together to plot them together, deleting, renaming.		
 	def handleCalculation(self):
 		while True:
 			print '\nWe have not coded any options to handle calculations'
@@ -52,13 +52,15 @@ class Calculation:
 	#We let them load a calculation from the Calculations folder (and to help them, they can see which calculations are in the Calculation folder).
 	#Currently this has not been coded.
 	def chooseCalculation(self):
-		os.chdir(os.path.expanduser("~/Documents/Elvis/Calculations"))
+		#Show them which calculations exist.
+		os.chdir(os.path.expanduser("~/Documents/ElvisFiles/Calculations"))
 		print "\nYour saved calculations\n"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
 		elif platform.system() == "Windows":
 			subprocess.call("dir /s")
 
+		#Let the user choose the calculation. Keep asking until it is actually a calculation which exists.
 		while(True):
 			chosenCalculation = Message.getResponse("Select a calculation (case sensitive): ")
 			try:
@@ -70,6 +72,7 @@ class Calculation:
 				else:
 					Message.errorMessage()
 
+		#Populate all the variables of this calculation and all the fields of all the classes which are variables in this calculation.
 		self.name = chosenCalculation
 
 		self.sit = Situation()
@@ -300,59 +303,17 @@ class Calculation:
 		if l >= 2:
 			for i in range(1,l): 
 				#Get the intersection of polyhedron which this i-th point must lie in.
-				exitPoly = self.sit.sd.adjGraph.get_vertex(i-1)
-				enterPoly = self.sit.sd.adjGraph.get_vertex(i)
-				intersection = exitPoly&enterPoly
-				#Get the inequalities which define this polyhedron, and apply them to the i-th point.
-				constraintsForPoint = self.getConstraintsForSpecificPoint(intersection,i)
-				#Add this constraint to the running list of constraints.
-				constraints = constraints + constraintsForPoint
-		
+				exitPolyText = self.sit.sd.regionsText.get_vertex(i-1)
+				enterPolyText = self.sit.sd.regionsText.get_vertex(i)
+				intersectionText = exitPoly+enterPoly
+				for ineq in intersectionText:
+					constraint = str(ineq[0])
+					for j in range(self.sit.sd.d):
+						constraint = constraint + str(ineq[j+1])"*x[" +str(i*self.sit.sd.d+j) + "]"
+					constraints = constraints + constraint		
+	
 		#Cast the function expressions to "function_type"s. This currently is not working.
 		return constraints
-
-
-	#Get the numerical expressions determined by the polyhedral interface this specific point must lie in to get the constraint.
-	def getConstraintsForSpecificPoint(self,intersection,i):	
-		#Get a representation of the inequalities which bound this polyhedron.			
-		a = intersection.Hrepresentation()
-		length = len(a)
-		array = []
-		for m in range(length):
-			#The Hrepresentation is a weird object that is an array of some sort of pickled strings describing
-			#the hspaces in prose, rather than just as numbers. This will unpack it into an easy-to-use array.
-			string = str(a[m])
-			b = string.split(" ")
-			b = b[2:-2]
-			b[0] = b[0][1:-1]
-			for j in range(self.sit.sd.d-1):
-				b[j+1] = b[j+1][:-1]
-			b.remove('x')
-			
-			#With this new array, generate an expression which would represent what exactly is >=0 in this inequality.
-			constraint = '0'
-			negConstraint='0'
-			for j in range(self.sit.sd.d):
-				constraint = constraint + '+' + str(float(b[j])) +'*x['+str(self.sit.sd.d*i+j)+']'
-				negConstraint = negConstraint + '-' + str(float(b[j])) +'*x['+str(self.sit.sd.d*i+j)+']'
-			
-			#Add the final constant to the function expression.
-			if b[self.sit.sd.d] == '+':
-				constraint = constraint + '+ ' +str(float(b[self.sit.sd.d+1]))
-				negConstraint = negConstraint + '- ' +str(float(b[self.sit.sd.d+1]))
-			if b[self.sit.sd.d] == '-':
-				constraint = constraint + '- '+ str(float(b[self.sit.sd.d+1]))
-				negConstraint = negConstraint + '+ '+ str(float(b[self.sit.sd.d+1]))
-
-
-			#If it is an equality, break it up into two over-determined inequalities. Add the inequalit(y/ies) to the array
-			#of constraints.
-			if "equation" in str(a[m]):
-				array.append(constraint)
-				array.append(negConstraint)
-			if "inequality" in str(a[m]):
-				array.append(constraint)
-		return array
 				
 	
 	#Convert constraints into lambdas.
@@ -390,7 +351,7 @@ class Calculation:
 		while True:
 			self.name = Message.getResponse("Name your calculation: ")
 			currDir = os.getcwd()
-			os.chdir(os.path.expanduser('~/Documents/Elvis/Calculations'))
+			os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Calculations'))
 			try:
 				os.makedirs(self.name)
 				os.chdir(os.path.expanduser(self.name))
@@ -471,7 +432,7 @@ class Situation:
 
 			#Check that this space decomposition even has velocity sets. If it does not, the user can make one, or choose a different space decomposition.
 			#If it does, proceed as normal: choose a velocity set.
-			list_dir = os.listdir(os.path.expanduser('~/Documents/Elvis/Situations/'+self.sd.name+'/'))
+			list_dir = os.listdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/'))
 			count = 0
 			for file in list_dir:
 				if file.endswith('.text'): # eg: '.txt'

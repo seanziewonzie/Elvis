@@ -17,30 +17,32 @@ class Velocities:
 	#The user has decided to choose a velocity set associated with this space decomposition. This method will guide the user while they do so,
 	#and return the chosen velocity set.			
 	def chooseVelocities(self):
-		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+self.sd.name+'/'))
+		os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/'))
+		#Show the user the chosen velocity sets.
 		print "\nYour saved velocity sets:\n"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
 		elif platform.system() == "Windows":
 			subprocess.call("dir /s")
 
+		#Let the user choose a velocity file. Keep asking until it works. This code works whether
+		#the user types the file extension or not.
 		while(True):
 			chosenVelFile = Message.getResponse("Select a velocity file (case sensitive): ")
 			try:
 				with open(chosenVelFile,"r") as file:
 					content = file.readlines()
-				break
 			except OSError as e:
-				pass
-			try:
-				with open(chosenVelFile+'.text',"r") as file:
-					content = file.readlines()
-				break
-			except OSError as e:
-				if e.errno == errno.ENOENT:
-					print "---That velocity file does not exist, retry---"
-				else:
+				try:
+					with open(chosenVelFile+'.text',"r") as file:
+						content = file.readlines()
+				except OSError as e:
+					if e.errno == errno.ENOENT:
+						print "---That velocity file does not exist, retry---"
+					else:
 					Message.errorMessage()
+				break
+			break
 		content = [x.strip() for x in content]
 		self.name = content[0]
 		self.velocities = ast.literal_eval(content[1])
@@ -78,7 +80,7 @@ class Velocities:
 			save = Message.getResponse("Error, type either y or n, retry: ")
 		if save == "y":
 			currDir = os.getcwd()
-			os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + self.sd.name +'/'))
+			os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/' + self.sd.name +'/'))
 			saveDir = os.getcwd()
 			while True:
 				self.name = Message.getResponse("Name your velocity set. Do not use 'q': ")
