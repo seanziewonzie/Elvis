@@ -1,5 +1,0 @@
-Command for Tabs:
-http://www.mathworks.com/help/matlab/ref/uitab.html?searchHighlight=uitab
-
-App Designer:
-http://www.mathworks.com/help/matlab/ref/tabappdesigner-properties.html
