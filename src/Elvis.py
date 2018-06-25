@@ -2,6 +2,9 @@ import sys; sys.dont_write_bytecode = True
 from sage.all import *
 import CalculationsAndSituations as CAS
 import Message
+import os
+import subprocess
+import platform
 #In Elvis, there are two kinds of objects which are stored on the memory drive: situations and calculations.
 #This method will ask the user which kind of object they wish to deal with.
 def firstChoice():
@@ -23,11 +26,35 @@ def firstChoice():
 			sit.viewOrEditSituation()
 
 
+
+#Hi!
 def welcomeMessage():
 	print('\n      ----------------------------\n       Thank you for using Elvis. \n      Enter q at any time to quit.\n      ----------------------------\n')
 
 
+#Check if the ElvisFiles folder has already been created. If not, create it. If so,
+#continue with the program.
+def needSetup():
+	CURR_DIR = os.getcwd()
+	try:
+		os.chdir(os.path.expanduser("~/Documents/ElvisFiles"))
+	except:
+		Setup()
+	os.chdir(CURR_DIR)
+
+
+#Create ElvisFiles and populate it with the Calculations folder and the Situations folder.
+def Setup():
+	os.chdir(os.path.expanduser("~/Documents"))
+	os.mkdir("ElvisFiles")
+	os.chdir(os.path.expanduser("ElvisFiles/"))
+	os.mkdir("Calculations")
+	os.mkdir("Situations")
+
+
+#Men want to be him. Women want to be *with* him. He's... main()!
 def main():
+	needSetup()
 	welcomeMessage()
 	firstChoice()
 
