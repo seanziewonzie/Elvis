@@ -24,7 +24,7 @@ def firstChoice():
 
 
 def welcomeMessage():
-	print('\n      ------------------------------\n       Thank you for using Elvis. \n      Enter q at any time to quit.\n      ------------------------------\n')
+	print('\n      ----------------------------\n       Thank you for using Elvis. \n      Enter q at any time to quit.\n      ----------------------------\n')
 
 
 def main():

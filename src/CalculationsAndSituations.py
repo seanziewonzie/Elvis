@@ -66,8 +66,8 @@ class Calculation:
 			try:
 				os.chdir(os.path.expanduser(chosenCalculation))
 				break
-			except OSError as e:
-				if e.errno == errno.ENOENT:
+			except:
+				if OSError.errno == errno.ENOENT:
 					print "---That calculation does not exist, retry---"
 				else:
 					Message.errorMessage()
@@ -303,16 +303,17 @@ class Calculation:
 		if l >= 2:
 			for i in range(1,l): 
 				#Get the intersection of polyhedron which this i-th point must lie in.
-				exitPolyText = self.sit.sd.regionsText.get_vertex(i-1)
-				enterPolyText = self.sit.sd.regionsText.get_vertex(i)
-				intersectionText = exitPoly+enterPoly
+				exitPolyText = self.sit.sd.regionsText[i-1]
+				enterPolyText = self.sit.sd.regionsText[i]
+				intersectionText = exitPolyText+enterPolyText
 				for ineq in intersectionText:
 					constraint = str(ineq[0])
 					for j in range(self.sit.sd.d):
-						constraint = constraint + str(ineq[j+1])"*x[" +str(i*self.sit.sd.d+j) + "]"
-					constraints = constraints + constraint		
+						constraint = constraint + '+' + str(ineq[j+1]) + "*x[" +str(i*self.sit.sd.d+j) + "]"
+					constraints.append(constraint)
 	
 		#Cast the function expressions to "function_type"s. This currently is not working.
+		print constraints
 		return constraints
 				
 	
@@ -348,49 +349,53 @@ class Calculation:
 
 
 	def saveCalculation(self):
-		while True:
-			self.name = Message.getResponse("Name your calculation: ")
-			currDir = os.getcwd()
-			os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Calculations'))
-			try:
-				os.makedirs(self.name)
-				os.chdir(os.path.expanduser(self.name))
-				saveDir = os.getcwd()
-			except OSError as e:
-				if e.errno != errno.EEXIST:
-					Message.errorMessage()
-				else:	
-					print "ERROR... Already a saved calculation. \n"
-				continue
-			break
+		save = Message.getResponse("Save this calculation(y/n): ")
+		while save != "y" and save != "n":
+			save = Message.getResponse("Error, type either y or n, retry: ")
+		if save == "y":
+			while True:
+				self.name = Message.getResponse("Name your calculation: ")
+				currDir = os.getcwd()
+				os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Calculations'))
+				try:
+					os.makedirs(self.name)
+					os.chdir(os.path.expanduser(self.name))
+					saveDir = os.getcwd()
+				except:
+					if OSError.errno != errno.EEXIST:
+						Message.errorMessage()
+					else:	
+						print "ERROR... Already a saved calculation. \n"
+					continue
+				break
 
-		sdFile = open("Space_Decomp_Info.txt","w+")
-		sdFile.write(self.sit.sd.name + "\n")
-		sdFile.write(str(self.sit.sd.d) + "\n")
-		sdFile.write(str(self.sit.sd.n )+ "\n")
-		sdFile.write(str(self.sit.sd.adjArray) + "\n")
-		sdFile.write(str(self.sit.sd.regionsText) + "\n")
-		sdFile.close()
+			sdFile = open("Space_Decomp_Info.txt","w+")
+			sdFile.write(self.sit.sd.name + "\n")
+			sdFile.write(str(self.sit.sd.d) + "\n")
+			sdFile.write(str(self.sit.sd.n )+ "\n")
+			sdFile.write(str(self.sit.sd.adjArray) + "\n")
+			sdFile.write(str(self.sit.sd.regionsText) + "\n")
+			sdFile.close()
 
-		velFile = open("Velocities_Info.txt","w+")
-		velFile.write(str(self.sit.vel.name)  + "\n")
-		velFile.write(str(self.sit.vel.velocities))
-		velFile.close()
+			velFile = open("Velocities_Info.txt","w+")
+			velFile.write(str(self.sit.vel.name)  + "\n")
+			velFile.write(str(self.sit.vel.velocities))
+			velFile.close()
 
-		startAndEndFile = open("Start_And_End_Info.txt","w+")
-		startAndEndFile.write(str(self.startCoords) + "\n")
-		startAndEndFile.write(str(self.startRegion) + "\n")
-		startAndEndFile.write(str(self.endCoords) + "\n")
-		startAndEndFile.write(str(self.endRegion) + "\n")
-		startAndEndFile.close()
+			startAndEndFile = open("Start_And_End_Info.txt","w+")
+			startAndEndFile.write(str(self.startCoords) + "\n")
+			startAndEndFile.write(str(self.startRegion) + "\n")
+			startAndEndFile.write(str(self.endCoords) + "\n")
+			startAndEndFile.write(str(self.endRegion) + "\n")
+			startAndEndFile.close()
 
-		solutionFile = open("Solution_Info.txt","w+")
-		solutionFile.write(str(self.bestTime) + "\n")
-		solutionFile.write(str(self.bestPath) + "\n")
-		solutionFile.close()
+			solutionFile = open("Solution_Info.txt","w+")
+			solutionFile.write(str(self.bestTime) + "\n")
+			solutionFile.write(str(self.bestPath) + "\n")
+			solutionFile.close()
 
-		os.chdir(os.path.expanduser(currDir))
-		print  self.name + " saved to " + saveDir
+			os.chdir(os.path.expanduser(currDir))
+			print  self.name + " saved to " + saveDir
 
 
 ###############################################################################################################################
@@ -432,11 +437,11 @@ class Situation:
 
 			#Check that this space decomposition even has velocity sets. If it does not, the user can make one, or choose a different space decomposition.
 			#If it does, proceed as normal: choose a velocity set.
-			list_dir = os.listdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/'))
+			list_dir = os.listdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/Velocities/'))
+			
 			count = 0
 			for file in list_dir:
-				if file.endswith('.text'): # eg: '.txt'
-					count += 1
+				count += 1
 
 			if count == 0:
 				print 'There are no velocity sets associated to this space decomposition. \n'

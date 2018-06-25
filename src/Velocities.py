@@ -17,9 +17,9 @@ class Velocities:
 	#The user has decided to choose a velocity set associated with this space decomposition. This method will guide the user while they do so,
 	#and return the chosen velocity set.			
 	def chooseVelocities(self):
-		os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/'))
+		os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/Velocities/'))
 		#Show the user the chosen velocity sets.
-		print "\nYour saved velocity sets:\n"
+		print "\nYour saved velocity sets:"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
 		elif platform.system() == "Windows":
@@ -28,19 +28,19 @@ class Velocities:
 		#Let the user choose a velocity file. Keep asking until it works. This code works whether
 		#the user types the file extension or not.
 		while(True):
-			chosenVelFile = Message.getResponse("Select a velocity file (case sensitive): ")
+			chosenVelFile = Message.getResponse("\nSelect a velocity file (case sensitive): ")
 			try:
 				with open(chosenVelFile,"r") as file:
 					content = file.readlines()
-			except OSError as e:
+			except:
 				try:
-					with open(chosenVelFile+'.text',"r") as file:
+					with open(chosenVelFile+'.txt',"r") as file:
 						content = file.readlines()
-				except OSError as e:
-					if e.errno == errno.ENOENT:
+				except:
+					if OSError.errno == errno.ENOENT:
 						print "---That velocity file does not exist, retry---"
 					else:
-					Message.errorMessage()
+						Message.errorMessage()
 				break
 			break
 		content = [x.strip() for x in content]
@@ -80,14 +80,14 @@ class Velocities:
 			save = Message.getResponse("Error, type either y or n, retry: ")
 		if save == "y":
 			currDir = os.getcwd()
-			os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/' + self.sd.name +'/'))
+			os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/' + self.sd.name +'/Velocities/'))
 			saveDir = os.getcwd()
 			while True:
 				self.name = Message.getResponse("Name your velocity set. Do not use 'q': ")
 				try:
-					velFile = open(self.name+'.text',"w+")
-				except OSError as e:
-					if e.errno != errno.EEXIST:
+					velFile = open(self.name+'.txt',"w+")
+				except:
+					if OSError.errno != errno.EEXIST:
 						Message.errorMessage()
 					else:	
 						print "ERROR... Already a saved velocity set. \n"

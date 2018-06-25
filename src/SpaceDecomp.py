@@ -113,6 +113,10 @@ class SpaceDecomp:
 				candidateHSpaces = self.createCandidate(i)
 				#Make a polyhedron out of these halfspaces.
 				candidatePoly = Polyhedron(ieqs = candidateHSpaces)
+				
+				if i == 0:
+					break
+				
 				overlap= self.checkOverlap(candidatePoly,i)
 				if overlap[0] == True:
 					print ('This region overlaps with region ' + str(overlap[1]+1) +'. Try again.')
@@ -170,7 +174,7 @@ class SpaceDecomp:
 	#This method will check if the proposed region i overlaps with any previous region.
 	def checkOverlap(self,candidatePoly,i):
 		overlap = []
-		for otherPoly in regionsPoly:
+		for otherPoly in self.regionsPoly:
 			p = candidatePoly&otherPoly
 			if p.dim()>=self.d:
 				overlap.append(True)
@@ -276,5 +280,6 @@ class SpaceDecomp:
 			sdFile.write(str(self.adjArray) + "\n")
 			sdFile.write(str(self.regionsText) + "\n")
 			sdFile.close()
+			os.mkdir("Velocities")
 			os.chdir(os.path.expanduser(currDir))
 			print  self.name + " saved to " + saveDir
