@@ -37,7 +37,7 @@ class SpaceDecomp:
 
 	#This method loads a pre-existing Space Decompositons and prints relevant info to user.
 	def chooseSpaceDecomp(self):
-		os.chdir(os.path.expanduser("~/Documents/Elvis/Situations"))
+		os.chdir(os.path.expanduser("~/Documents/ElvisFiles/Situations"))
 		print "\nYour saved space decompositions:"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
@@ -256,7 +256,7 @@ class SpaceDecomp:
 			while True:
 				self.name = raw_input("Name your space decomposition. Do not use 'q' ")
 				currDir = os.getcwd()
-				os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
+				os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations'))
 				try:
 					os.makedirs(self.name)
 					os.chdir(os.path.expanduser(self.name))
