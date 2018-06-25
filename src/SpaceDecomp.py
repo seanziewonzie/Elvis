@@ -38,14 +38,14 @@ class SpaceDecomp:
 	#This method loads a pre-existing Space Decompositons and prints relevant info to user.
 	def chooseSpaceDecomp(self):
 		os.chdir(os.path.expanduser("~/Documents/Elvis/Situations"))
-		print "\nYour saved space decompositions\n"
+		print "\nYour saved space decompositions:"
 		if platform.system() == "Linux":
 			subprocess.call("ls")
 		elif platform.system() == "Windows":
-			subprocess.call("dir /s")
+			subprocess.call("dir", shell=True)
 
 		while(True):
-			chosenDecomp = Message.getResponse("Select a space decomposition (case sensitive): ")
+			chosenDecomp = Message.getResponse("\nSelect a space decomposition (case sensitive): ")
 			try:
 				os.chdir(os.path.expanduser(chosenDecomp))
 				break
@@ -74,13 +74,9 @@ class SpaceDecomp:
 		self.getDimensionsAndRegions()
 		self.createRegionsAndAdjacency()
 		self.makeGraph()
+		self.saveSpaceDecomp()
 
 
-		save = Message.getResponse("Save this space decomposition(y/n): ")
-		while save != "y" and save != "n":
-			save = Message.getResponse("Error, type either y or n, retry: ")
-		if save == "y":
-			self.saveSpaceDecomp()
 				
 
 
@@ -92,8 +88,6 @@ class SpaceDecomp:
 			try:	
 				self.d=int(raw)
 			except:
-				if raw == 'q':
-					raise SystemExit
 				Message.errorMessage()
 				continue
 			break
@@ -101,11 +95,9 @@ class SpaceDecomp:
 		while True:
 			try:	
 				#global n
-				raw=raw_input('How many regions? ')
+				raw=Message.getResponse('How many regions? ')
 				self.n = (int)(raw)
 			except:
-				if raw == 'q':
-					raise SystemExit	
 				Message.errorMessage()
 				continue
 			break
@@ -144,12 +136,10 @@ class SpaceDecomp:
 	def createCandidate(self,i):
 		hSpaces=[]
 		while True:
+			raw=Message.getResponse('\nHow many halfspaces cut out region '+str(i+1)+'? ')
 			try:
-				raw=raw_input('\nHow many halfspaces cut out region '+str(i+1)+'? ')
 				m = (int)(raw)
 			except:
-				if raw == 'q':
-					raise SystemExit
 				Message.errorMessage()
 				continue
 			break
@@ -157,14 +147,12 @@ class SpaceDecomp:
 		#Get the list of halfspaces that will together cut out the proposed region i.	
 		for j in range(m):
 			while True:
-				#Get a halfspace from the user
+				rawNums = Message.getResponse('\nGive a list of ' + str(self.d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n')
+				#Try and turn the response into a list of numbers.
 				try:
-					rawNums = raw_input('\nGive a list of ' + str(self.d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n')
 					splitNums = rawNums.split(" ")
 					hSpace = [float(num) for num in splitNums]
 				except:
-					if rawNums == 'q':
-						raise SystemExit
 					Message.errorMessage()
 					continue
 
@@ -174,22 +162,21 @@ class SpaceDecomp:
 				else:
 					break
 			
-			#Add the halfspace to the list of halfspaces
+			#Add the halfspace to the list of halfspaces.
 			hSpaces.append(hSpace)
-
-
-
 		return hSpaces
 
 
 	#This method will check if the proposed region i overlaps with any previous region.
 	def checkOverlap(self,candidatePoly,i):
-		overlap = [False]
-		for j in range(i):
-			p = candidatePoly&self.regionsPoly[j]
+		overlap = []
+		for otherPoly in regionsPoly:
+			p = candidatePoly&otherPoly
 			if p.dim()>=self.d:
 				overlap.append(True)
 				overlap.append(j)
+			else:
+				overlap.append(False)
 		return overlap
 
 
@@ -262,28 +249,32 @@ class SpaceDecomp:
 	#Give an option to save this new space decomposition as a folder within the "Situations" folder.
 	def saveSpaceDecomp(self):
 		#Save the Space Decomp to the file structure created when setup.py is run
-		while True:
-			self.name = raw_input("Name your Space Decomp: ")
-			currDir = os.getcwd()
-			os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
-			try:
-				os.makedirs(self.name)
-				os.chdir(os.path.expanduser(self.name))
-				saveDir = os.getcwd()
-			except OSError as e:
-				if e.errno != errno.EEXIST:
-					Message.errorMessage()
-				else:	
-					print "ERROR... Already a saved space decomposition. \n"
-				continue
-			break
+		save = Message.getResponse("Save this space decomposition(y/n): ")
+		while save != "y" and save != "n":
+			save = Message.getResponse("Error, type either y or n, retry: ")
+		if save == "y":
+			while True:
+				self.name = raw_input("Name your space decomposition. Do not use 'q' ")
+				currDir = os.getcwd()
+				os.chdir(os.path.expanduser('~/Documents/Elvis/Situations'))
+				try:
+					os.makedirs(self.name)
+					os.chdir(os.path.expanduser(self.name))
+					saveDir = os.getcwd()
+				except OSError as e:
+					if e.errno != errno.EEXIST:
+						Message.errorMessage()
+					else:	
+						print "ERROR... Already a saved space decomposition. \n"
+					continue
+				break
 
-		sdFile = open("Space_Decomp_Info.txt","w+")
-		sdFile.write(self.name + "\n")
-		sdFile.write(str(self.d) + "\n")
-		sdFile.write(str(self.n) + "\n")
-		sdFile.write(str(self.adjArray) + "\n")
-		sdFile.write(str(self.regionsText) + "\n")
-		sdFile.close()
-		os.chdir(os.path.expanduser(currDir))
-		print  self.name + " saved to " + saveDir
+			sdFile = open("Space_Decomp_Info.txt","w+")
+			sdFile.write(self.name + "\n")
+			sdFile.write(str(self.d) + "\n")
+			sdFile.write(str(self.n) + "\n")
+			sdFile.write(str(self.adjArray) + "\n")
+			sdFile.write(str(self.regionsText) + "\n")
+			sdFile.close()
+			os.chdir(os.path.expanduser(currDir))
+			print  self.name + " saved to " + saveDir
