@@ -164,7 +164,7 @@ class SpaceDecomp:
 			if m < 0:
 				print 'There cannot be a negative number of halfspaces'
 				continue
-			if m = 0:
+			if m == 0:
 				print 'There must be at least one halfspace which cuts out this region.\nIf you wish for you region to be all of space, split space into two regions and remember to always assign to each region the same velocity set.'
 				continue			
 			break
@@ -322,7 +322,6 @@ class SpaceDecomp:
 			sdFile.write(str(self.adjArray) + "\n")
 			sdFile.write(str(self.regionsText) + "\n")
 			sdFile.close()
-			os.mkdir("Velocities")
 			
 			#Go back to the directory the user was in before this writing process.
 			os.chdir(os.path.expanduser(currDir))

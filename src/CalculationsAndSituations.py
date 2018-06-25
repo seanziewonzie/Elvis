@@ -41,9 +41,9 @@ class Calculation:
 	#Potential actions: plotting, merging two calculations together to plot them together, deleting, renaming.		
 	def handleCalculation(self):
 		while True:
-			print '\nWe have not coded any options to handle calculations'
 			response = Message.getResponse('\nEnter 1 to perform another action with this calculation. \nEnter anything else to get go back to the beginning. \n')
 			if response == 1:
+				print '\nWe have not coded any options to handle calculations'
 				continue
 			break
 
