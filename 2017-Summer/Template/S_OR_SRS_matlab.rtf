@@ -1,0 +1,60 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf760
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww12140\viewh18960\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 % Written by Emily Ribando-Gros\
+%\
+% TODO\
+% \
+% 1. Only works for interface at y=0\
+\
+w1 = 1;             % weight of starting region\
+w2 = 2;             % weight of other region\
+w3 = max([w1, w2]); % weight of interface\
+\
+% starting position\
+x1 = 1;\
+y1 = 2;\
+p1 = [x1 y1];\
+\
+% ending position\
+x2 = 14;\
+y2 = 3;\
+p2 = [x2 y2];\
+\
+% x-distance between starting and ending position\
+z = x2-x1;\
+\
+% time to travel in straight line\
+T_S = @(y1, y2) sqrt(z^2+(y2-y1)^2)/w1;\
+% time to travel when using interface\
+T_SRS = @(y1, y2) z/w3+(y1+y2)/(w1*w3/sqrt(w1^2+w3^2));\
+\
+% bifurcation\
+z_bif = @(y1, y2) (y1+y2+2*(w3/w1)*sqrt(y1*y2))/sqrt((w3/w1)^2-1);\
+z_bifval = z_bif(y1,y2);\
+\
+figure(1)\
+axis([-1 15 -1 15]);\
+set(gca,'xtick',-1:15);\
+set(gca,'ytick',-1:15);\
+xlabel('x');\
+ylabel('y');\
+title('Least Time Path');\
+\
+% Check to see which path is faster\
+if z < z_bifval       % stay in starting region\
+    plot([x1 x2],[y1 y2]);\
+elseif z > z_bifval   % use faster region\
+     \
+    d1 = y1/sqrt((w2/w1)^2-1);  % x-dist to faster region from slower region\
+    d2 = y2/sqrt((w2/w1)^2-1);  % x-dist back to slower region\
+    d3 = z-(d1+d2);             % dist travelled on faster region\
+    plot([x1 x1+d1],[y1 0],'b',[x1+d1 x1+d1+d3],[0 0],'r',[x1+d1+d3 x2],[0 y2],'b');\
+    \
+else                  % both paths take the same amount of time\
+    \
+end}
