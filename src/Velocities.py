@@ -1,67 +1,105 @@
 import sys; sys.dont_write_bytecode = True
 from sage.all import *
-from Calculation import *
-from SaveMessage import *
-from ErrorMessage import *
+import os
+import errno
+import subprocess
+import re
+import platform
+import Message
+import ast
 class Velocities:
-	def __init__(self,spaceDecomp):
-		self.spaceDecomp = spaceDecomp
+	def __init__(self,sd):
+		self.velocities = []
+		self.name =""
+		self.sd=sd
 	
 
-	def velocitiesLoadOrNew(self):
-		#if there are some velocity sets associated with this spaceDecomp, run this
-			#self.response =raw_input('\nPress 1 to load a velocity set associated with this space decompostion. \nPress 2 to create a new velocity set associated with this space decompostion. ')
-			#while response != 1 and response !=2
-				#self.response =raw_input('Please enter 1 or 2. \nPress 1 to load a velocity set associated with this space decompostion. \nPress 2 to create a new velocity set associated with this space decompostion. ')
-			#if self.response == '1':
-				#return self.chooseVelocities()
-			#if self.response =='2':
-				#print('You will now create a new velocity set for this space decomposition.')
-				#return self.createVelocities()
-
-		#if there are no velocity sets associated with this spaceDecomp, run this
-		print('There are no velocity sets associated with this space decomposition. You will now create one. ')
-		return self.createVelocities()
-		
-			
+	#The user has decided to choose a velocity set associated with this space decomposition. This method will guide the user while they do so,
+	#and return the chosen velocity set.			
 	def chooseVelocities(self):
-		#Here the user will have the option of seeing the velocity sets saved under this spaceDecomp folder, and choosing one file
-		#velocity = whichever file they choose
-		#return velocity
-		print('We have not coded the saving and loading of velocity sets yet.' )
-		return []
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/'+self.sd.name+'/'))
+		print "\nYour saved velocity sets:\n"
+		if platform.system() == "Linux":
+			subprocess.call("ls")
+		elif platform.system() == "Windows":
+			subprocess.call("dir /s")
+
+		while(True):
+			chosenVelFile = Message.getResponse("Select a velocity file (case sensitive): ")
+			try:
+				with open(chosenVelFile,"r") as file:
+					content = file.readlines()
+				break
+			except OSError as e:
+				pass
+			try:
+				with open(chosenVelFile+'.text',"r") as file:
+					content = file.readlines()
+				break
+			except OSError as e:
+				if e.errno == errno.ENOENT:
+					print "---That velocity file does not exist, retry---"
+				else:
+					Message.errorMessage()
+		content = [x.strip() for x in content]
+		self.name = content[0]
+		self.velocities = ast.literal_eval(content[1])
+
+
+
 		
 
-	#This method will create a new velocity set for this space decomposition.
+	#This method will create and return a new velocity set for this space decomposition.
 	def createVelocities(self):
 		#There will be exactly one velocity set associated to each region in the space decomposition.
-		n = self.spaceDecomp[1]
-		velocities = []
-		for i in range(n):
+		for i in range(self.sd.n):
 			while True:
 				#The user will be prompted to enter a valid velocity set.
 				try:
-					#For now, velocity sets are just sphere, defined by a real number. This method will have to be rewritten to accept 
+					#For now, velocity sets are just spheres, defined by a real number. This method will have to be rewritten to accept 
 					#any function in hyperspherical coordinates.
 					rawNumber = raw_input('\nEnter a positive real number to indicate the velocity associated with region ' +str(i+1) +'. \n')
 					speed = (float)(rawNumber)
 				except:
 					if rawNumber == 'q':
+						print 'quitting...'				
 						raise SystemExit	
-					err=ErrorMessage()
-					err.errorMessage()
+					Message.errorMessage()
 					continue
 				#Check that the number is positive before breaking the loop.	
 				if speed > 0:
 					break
 				else:
 					print('This is not a positive number. ')
-			velocities.append(speed)
+			self.velocities.append(speed)
 
-		#self.saveVelocitySet()
-		return velocities
+		if self.sd.name != "":
+			save = Message.getResponse("Save this velocity set(y/n): ")
+			while save != "y" and save != "n":
+				save = Message.getResponse("Error, type either y or n, retry: ")
+			if save == "y":
+				self.saveVelocitySet()
 
 
+	#Save a velocity set file in the folder associated to the relevant space decomposition.
 	def saveVelocitySet(self):
-		sm = SaveMessage('velocity set')
-		sm.message()
+		#Save the velocity set as a 
+		currDir = os.getcwd()
+		os.chdir(os.path.expanduser('~/Documents/Elvis/Situations/' + self.sd.name +'/'))
+		saveDir = os.getcwd()
+		while True:
+			self.name = Message.getResponse("Name your velocity set. Do not use 'q': ")
+			try:
+				velFile = open(self.name+'.text',"w+")
+			except OSError as e:
+				if e.errno != errno.EEXIST:
+					Message.errorMessage()
+				else:	
+					print "ERROR... Already a saved velocity set. \n"
+				continue
+			break
+		velFile.write(self.name + "\n")
+		velFile.write(str(self.velocities))
+		velFile.close()
+		os.chdir(os.path.expanduser(currDir))
+		print  self.name + " saved to " + saveDir
