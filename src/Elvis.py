@@ -5,7 +5,7 @@ import Message
 import os
 import subprocess
 import platform
-#In Elvis, there are two kinds of objects which are stored on the memory drive: situations and calculations.
+#In Elvis, there are two kinds of objects which are stored for later use: situations and calculations.
 #This method will ask the user which kind of object they wish to deal with.
 def firstChoice():
 	#Keep looping the program from the beginning until the user quits somewhere.
@@ -14,17 +14,18 @@ def firstChoice():
 		if response != '1' and response != '2':
 			print 'Please enter 1 or 2.' 
 			continue
+		
 		#Get a calculation, and handle it until the user asks to return to the beginning.
 		if response == '1':
 			calc=CAS.Calculation()
 			calc.calculationLoadOrNew()
 			calc.handleCalculation()
+		
 		#Get a situation, and either view or edit it until the user asks to return to the beginning.
 		if response =='2':
 			sit=CAS.Situation()
 			sit.situationLoadOrNew()
 			sit.viewOrEditSituation()
-
 
 
 #Hi!
@@ -43,7 +44,7 @@ def needSetup():
 	os.chdir(CURR_DIR)
 
 
-#Create ElvisFiles and populate it with the Calculations folder and the Situations folder.
+#Create the ElvisFiles folder and populate it with the Calculations folder and the Situations folder.
 def Setup():
 	os.chdir(os.path.expanduser("~/Documents"))
 	os.mkdir("ElvisFiles")

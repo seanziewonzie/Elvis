@@ -48,7 +48,7 @@ class Calculation:
 			break
 
 	
-	#We let the user load a calculation from the Calculations folder (and to help them, they can see which calculations are in the Calculation folder).
+	#We let the user load a calculation from the Calculations folder (and to help them, they can see which calculations are in the Calculations folder).
 	def chooseCalculation(self):
 		#Show them which calculations exist.
 		os.chdir(os.path.expanduser("~/Documents/ElvisFiles/Calculations"))
@@ -366,7 +366,7 @@ class Calculation:
 
 		#They decided to save:
 		if save == "y":
-			#Save the current directory.
+			#Mark the current directory, so we can return back to it after all of this writing.
 			currDir = os.getcwd()
 			
 			#They will keep giving a name to the calculation until it both makes sense and is not already the name
@@ -413,7 +413,7 @@ class Calculation:
 			solutionFile.write(str(self.bestPath) + "\n")
 			solutionFile.close()
 
-			#Go back to the current directory.
+			#Go back to the directory the user was in before this writing process.
 			os.chdir(os.path.expanduser(currDir))
 
 			#A confirmation message for the user.
