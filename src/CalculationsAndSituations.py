@@ -54,15 +54,12 @@ class Calculation:
 	def chooseCalculation(self):
 		#Show them which calculations exist.
 		os.chdir(os.path.expanduser("~/Documents/ElvisFiles/Calculations"))
-		print "\nYour saved calculations\n"
-		if platform.system() == "Linux":
-			subprocess.call("ls")
-		elif platform.system() == "Windows":
-			subprocess.call("dir /s")
+		print "\nYour saved calculations"
+		subprocess.call("ls")
 
 		#Let the user choose the calculation. Keep asking until it is actually a calculation which exists.
 		while(True):
-			chosenCalculation = Message.getResponse("Select a calculation (case sensitive): ")
+			chosenCalculation = Message.getResponse("\nSelect a calculation (case sensitive): ")
 			try:
 				os.chdir(os.path.expanduser(chosenCalculation))
 				break

@@ -20,10 +20,7 @@ class Velocities:
 		os.chdir(os.path.expanduser('~/Documents/ElvisFiles/Situations/'+self.sd.name+'/Velocities/'))
 		#Show the user the chosen velocity sets.
 		print "\nYour saved velocity sets:"
-		if platform.system() == "Linux":
-			subprocess.call("ls")
-		elif platform.system() == "Windows":
-			subprocess.call("dir /s")
+		subprocess.call("ls")
 
 		#Let the user choose a velocity file. Keep asking until it works. This code works whether
 		#the user types the file extension or not.

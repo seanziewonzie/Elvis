@@ -39,18 +39,15 @@ class SpaceDecomp:
 	def chooseSpaceDecomp(self):
 		os.chdir(os.path.expanduser("~/Documents/ElvisFiles/Situations"))
 		print "\nYour saved space decompositions:"
-		if platform.system() == "Linux":
-			subprocess.call("ls")
-		elif platform.system() == "Windows":
-			subprocess.call("dir", shell=True)
+		subprocess.call("ls")
 
 		while(True):
 			chosenDecomp = Message.getResponse("\nSelect a space decomposition (case sensitive): ")
 			try:
 				os.chdir(os.path.expanduser(chosenDecomp))
 				break
-			except OSError as e:
-				if e.errno == errno.ENOENT:
+			except:
+				if OSError.errno == errno.ENOENT:
 					print "---That space decomposition does not exist, retry---"
 				else:
 					Message.errorMessage()
@@ -265,8 +262,8 @@ class SpaceDecomp:
 					os.makedirs(self.name)
 					os.chdir(os.path.expanduser(self.name))
 					saveDir = os.getcwd()
-				except OSError as e:
-					if e.errno != errno.EEXIST:
+				except:
+					if OSError.errno != errno.EEXIST:
 						Message.errorMessage()
 					else:	
 						print "ERROR... Already a saved space decomposition. \n"
