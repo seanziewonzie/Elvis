@@ -205,12 +205,16 @@ class Calculation:
 				#into pieces of length d, every piece represents a turning point of the path.
 
 				#T is the function to minimize. Create it and turn it into a lambda function.
-				T=self.functionToMinimize(l)
+				T=self.functionToMinimize(l,path)
+				#print "\nFunction" + str(k) + "\n" + T
 				S = lambda x: eval(T)
 
 				#Get the constraints this function must be minimized over. We only care about points which are in the 
 				#correct interfaces. Turn them into lambda functions.
 				constraints=self.getConstraints(l)
+				#print"\nConstraints" + str(k) + ":"
+				#for c in constraints:
+					#print c
 				lambdas_list =[]
 				for i in range(len(constraints)):
 					lambdas_list.append(self.build_lambdas(constraints,i))
@@ -248,20 +252,21 @@ class Calculation:
 
 	#This function will build a mathematical expression of the time a path from the starting point to the ending point takes 
 	#in the situation.
-	def functionToMinimize(self,l):
+	def functionToMinimize(self,l,path):
 		T = '0'
 		for i in range(l):
 			#The following loop builds an expression for the distance between one chosen point and the next.
 			sqDist='0'
 			for j in range(self.sit.sd.d):
 				sqDist = sqDist + '+(x[' +str(self.sit.sd.d*(i+1)+j)+ ']-x[' +str(self.sit.sd.d*i+j)+ '])**2'
-			
+
 			#The time that one piece of the path contributes (depends on distance and velocity).
-			t = '(1.0/' +str(self.sit.vel.velocities[i])+ ')*sqrt(' + sqDist + ')'
+			t = '(1.0/' +str(self.sit.vel.velocities[path[i]])+ ')*sqrt(' + sqDist + ')'
 			
 			#Add it to the total time function
 			T = T+ '+' +t
 		return T
+
 
 
 	#This will generate an array of "expressions" which correspond to inequalities involving the variables x_i_j. These inequalities

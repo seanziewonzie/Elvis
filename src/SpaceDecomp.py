@@ -197,8 +197,8 @@ class SpaceDecomp:
 	#This method will check if the proposed region i overlaps with any previous region.
 	def checkOverlap(self,candidatePoly,i):
 		overlap = []
-		for otherPoly in self.regionsPoly:
-			p = candidatePoly&otherPoly
+		for j in range(len(self.regionsPoly)):
+			p = candidatePoly&self.regionsPoly[j]
 			if p.dim()>=self.d:
 				overlap.append(True)
 				overlap.append(j)
