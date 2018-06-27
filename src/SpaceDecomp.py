@@ -174,7 +174,7 @@ class SpaceDecomp:
 		for j in range(m):
 			#Keep asking for a list of numbers to describe the j-th halfspace until it is a sensible list of the correct length.
 			while True:
-				rawNums = Message.getResponse('\nGive a list of ' + str(self.d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponsing to the inequality \na0 + a1*x1 + ... an*xn <= 0 \n')
+				rawNums = Message.getResponse('\nGive a list of ' + str(self.d + 1) + ' numbers to indicate the ' +ordinator.ordinal(j+1)+ ' halfspace, \nwhere a0 a1 ... an indicates the halfspace corresponding to the inequality \na0 + a1*x1 + ... + an*xn <= 0 \n')
 				#Try and turn the response into a list of numbers.
 				try:
 					splitNums = rawNums.split(" ")
