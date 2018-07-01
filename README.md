@@ -17,6 +17,8 @@ One common optimization problem that occurs on a daily basis is minimizing time 
 
 This project allows you to construct polyhedra and velocity sets associated with them in order to numerically solve quickest-path problems in n dimensions.
 
+Make sure to have SageMath and python2 installed.
+
 First, download and extract the zip file. Then, in your command line interface, change into the 'Elvis/src' directory, then type
 
 `sage Elvis.py`
